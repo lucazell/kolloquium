@@ -24,8 +24,7 @@ pre,
 code,
 .formula,
 #terminal-content,
-.label,
-.cursor {
+.label {
     font-family: 'JetBrains Mono', monospace;
 }
 
@@ -231,11 +230,7 @@ code,
     letter-spacing: 0.05rem;
 }
 
-.cursor {
-    font-size: 2rem;
-    color: var(--neon-green);
-    animation: blink 1.5s step-end infinite;
-}
+
 
 /* ZOOM CONTAINER (SECTION 5) */
 #zoom-container {
@@ -460,16 +455,7 @@ code,
     align-items: center;
 }
 
-#blinking-cursor {
-    position: absolute;
-    bottom: 5%;
-    left: 5%;
-    font-family: 'JetBrains Mono', monospace;
-    color: #39FF14;
-    font-size: 2rem;
-    display: none;
-    animation: blink 0.8s step-end infinite;
-}
+
 
 @keyframes blink {
     50% { opacity: 0; }

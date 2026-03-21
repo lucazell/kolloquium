@@ -8,32 +8,9 @@ body {
     /* overflow: hidden; REMOVED FOR LENIS */
     background-color: #050505;
     color: #ffffff;
-    cursor: none;
-    /* Hide default cursor */
 }
 
-/* Custom Cursor */
-#cursor {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 20px;
-    height: 20px;
-    border: 1px solid #00FF41;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-    mix-blend-mode: difference;
-    transform: translate(-50%, -50%);
-    transition: transform 0.1s ease, width 0.2s, height 0.2s;
-}
 
-#cursor.hovered {
-    width: 50px;
-    height: 50px;
-    background: rgba(0, 255, 65, 0.1);
-    mix-blend-mode: normal;
-}
 
 /* Hide scrollbar for Chrome, Safari and Opera */
 .no-scrollbar::-webkit-scrollbar {
@@ -246,15 +223,7 @@ body {
     z-index: 20;
 }
 
-.cursor {
-    display: inline-block;
-    width: 10px;
-    height: 16px;
-    background-color: #39FF14;
-    vertical-align: bottom;
-    margin-left: 2px;
-    animation: blink 1s step-end infinite;
-}
+
 
 /* Crosshair Bounding Box */
 #crosshair {

@@ -126,7 +126,6 @@ class Presentation {
         this.bracketBox = document.getElementById('bracket-box');
         this.mountTerminal = document.getElementById('mount-terminal');
         this.mountContent = document.getElementById('mount-content');
-        this.blinkingCursor = document.getElementById('blinking-cursor');
         this.foundationLine = document.getElementById('foundation-line');
         this.finalText = document.getElementById('final-text');
         this.dataCanvas = new DataCanvas();
@@ -208,7 +207,6 @@ class Presentation {
             case 25: this.showFileError(); break;
             case 26: this.showFinalVerification(); break;
             case 27: await this.showSystemPurge(); break;
-            case 28: this.showBlinkingCursor(); break;
             case 29: this.showFoundationLine(); break;
             case 30: /* Dummy Tick - Strategic Pause */ break;
             case 31: this.showMicDrop(); break;
@@ -459,9 +457,7 @@ class Presentation {
         }, 300);
     }
 
-    showBlinkingCursor() {
-        if (this.blinkingCursor) this.blinkingCursor.style.display = 'block';
-    }
+
 
     showFoundationLine() {
         if (this.foundationLine) this.foundationLine.style.width = '100%';
@@ -473,7 +469,6 @@ class Presentation {
         document.body.style.backgroundColor = '#050505';
         
         // Hide previous elements
-        if (this.blinkingCursor) this.blinkingCursor.style.display = 'none';
         if (this.foundationLine) this.foundationLine.style.display = 'none';
         
         // Show Final Text

@@ -17,30 +17,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let isAnimating = false;
 
-    // --- Preloader ---
-    window.addEventListener("load", () => {
-        gsap.to("#preloader", {
-            opacity: 0,
-            duration: 0.5,
-            onComplete: () => document.getElementById("preloader").style.display = "none"
-        });
-    });
 
-    // --- Custom Cursor & Parallax Logic ---
-    const cursor = document.getElementById("cursor");
+    // --- Parallax Logic ---
     window.addEventListener("mousemove", (e) => {
-        gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1, ease: "power2.out" });
         const xPct = (e.clientX / window.innerWidth - 0.5) * 20;
         const yPct = (e.clientY / window.innerHeight - 0.5) * 20;
 
         gsap.to("#intro-main h1", { x: xPct, y: yPct, duration: 1, ease: "power2.out" });
         gsap.to(".chaos-item", { x: -xPct * 2, y: -yPct * 2, duration: 1.5, ease: "power2.out", overwrite: "auto" });
-    });
-
-    const hoverTargets = document.querySelectorAll("a, button, .iphone-content, #tech-code");
-    hoverTargets.forEach(el => {
-        el.addEventListener("mouseenter", () => cursor.classList.add("hovered"));
-        el.addEventListener("mouseleave", () => cursor.classList.remove("hovered"));
     });
 
 
