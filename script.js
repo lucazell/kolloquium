@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.presentation = {
         currentTick: 0,
         nextTick: function() {
-            if (isAnimating || this.currentTick >= 18) return;
+            if (isAnimating || this.currentTick >= 19) return;
             this.currentTick++;
             isAnimating = true;
             this.executeTick();
@@ -113,6 +113,23 @@ document.addEventListener("DOMContentLoaded", () => {
                     triggerShatterTransition();
                     unlock(2000); 
                     break;
+                case 19:
+                    const uiContainer = document.getElementById('ui-container');
+                    const threeCanvas = document.getElementById('three-canvas');
+                    if (uiContainer) {
+                        uiContainer.style.visibility = 'visible';
+                        uiContainer.style.opacity = '1';
+                    }
+                    if (threeCanvas) {
+                        threeCanvas.style.visibility = 'visible';
+                        threeCanvas.style.opacity = '1';
+                    }
+                    const oldElements = document.querySelectorAll('main, #grid-background, #interface-container');
+                    oldElements.forEach(el => {
+                        if(el) el.style.display = 'none';
+                    });
+                    unlock(500); 
+                    break;
             }
         }
     };
@@ -125,7 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener("keydown", (e) => {
         if (["Space", "ArrowRight", "PageDown", "ArrowDown"].includes(e.code)) {
             e.preventDefault();
-            if (window.presentation.currentTick < 18) {
+            if (window.presentation.currentTick < 19) {
                 window.presentation.nextTick();
             } else if (presentationPhase2) {
                 presentationPhase2.nextTick();
@@ -136,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener("mousedown", (e) => {
         if (e.target.closest("a, button")) return;
         if (e.button === 0) {
-            if (window.presentation.currentTick < 18) {
+            if (window.presentation.currentTick < 19) {
                 window.presentation.nextTick();
             } else if (presentationPhase2) {
                 presentationPhase2.nextTick();
@@ -211,11 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // 3. ANIMATION TIMELINE
         const tl = gsap.timeline({
             onComplete: () => {
-                const uiContainer = document.getElementById('ui-container');
-                const threeCanvas = document.getElementById('three-canvas');
-                if (uiContainer) uiContainer.style.opacity = '1';
-                if (threeCanvas) threeCanvas.style.opacity = '1';
-
+                // 3. Shatter-Overlay ausblenden
                 gsap.to(overlay, { opacity: 0, duration: 1.5, delay: 0.5 });
             }
         });
