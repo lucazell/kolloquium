@@ -48,24 +48,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Section 1: Intro
                 case 1:
                     gsap.to("#intro-title", { opacity: 0, pointerEvents: "none", duration: 1 });
-                    gsap.to("#timeline-line", { height: "15%", duration: 1 });
+                    gsap.to(["#master-timeline", "#timeline-gradient"], { opacity: 1, duration: 1, ease: "power2.inOut" });
                     gsap.to("#node-2022", { opacity: 1, x: 10, duration: 0.5, delay: 0.5 });
                     gsap.to("#bio-img-agency", { opacity: 1, duration: 1 });
                     unlock(1000); break;
                 case 2:
-                    gsap.to("#timeline-line", { height: "55%", duration: 1 });
                     gsap.to("#node-2023", { opacity: 1, x: 10, duration: 0.5, delay: 0.5 });
                     gsap.to("#bio-img-agency", { opacity: 0, duration: 0.5 });
                     gsap.to("#bio-img-reset", { opacity: 1, duration: 0.5, delay: 0.5 });
                     unlock(1000); break;
                 case 3:
-                    gsap.to("#timeline-line", { height: "95%", duration: 1 });
                     gsap.to("#node-2024", { opacity: 1, x: 10, duration: 0.5, delay: 0.5 });
                     gsap.to("#bio-img-reset", { opacity: 0, duration: 0.5 });
                     gsap.to("#bio-img-reality", { opacity: 1, duration: 0.5, delay: 0.5 });
                     unlock(1000); break;
                 case 4:
-                    gsap.to(["#timeline-line", ".timeline-node", "#bio-img-reality", "#timeline-rail"], {
+                    gsap.to([".timeline-node", "#bio-img-reality", "#timeline-rail"], {
                         opacity: 0, filter: "blur(10px)", duration: 0.5
                     });
                     gsap.to(["#sec-intro > div.w-2\\/5", "#sec-intro > div.w-3\\/5"], {
@@ -139,13 +137,253 @@ document.addEventListener("DOMContentLoaded", () => {
     // Scroll to top just in case
     window.scrollTo(0,0);
 
+    let isMasterTimelineZoomed = false;
+    let timelineAnimating = false;
+    let lastZoomedTick = -1;
+    let activePulseTween1 = null;
+    let activePulseTween2 = null;
+
+    function updateTimelineState(activeTick) {
+        let activeChap = "";
+        if (activeTick < 6) activeChap = "chap-pre-study";
+        else if (activeTick < 19) activeChap = "chap-sem-01";
+        else if (activeTick < 27) activeChap = "chap-sem-02";
+        else if (activeTick < 40) activeChap = "chap-sem-03";
+        else activeChap = "chap-outro";
+
+        if (activePulseTween1) {
+            activePulseTween1.kill();
+            activePulseTween1 = null;
+        }
+        if (activePulseTween2) {
+            activePulseTween2.kill();
+            activePulseTween2 = null;
+        }
+
+        document.querySelectorAll('.timeline-chapter').forEach(el => {
+            const dot = el.querySelector('.glow-dot');
+            const label = el.querySelector('.chapter-label');
+            if (!dot || !label) return;
+
+            gsap.killTweensOf(dot);
+            gsap.killTweensOf(label);
+
+            if (el.id === activeChap) {
+                if (el.id === "chap-sem-03") {
+                    gsap.set(dot, { backgroundColor: '#FF0000', boxShadow: '0 0 15px #FF0000', scale: 1, opacity: 1 });
+                    gsap.set(label, { color: '#FF0000', textShadow: '0 0 8px rgba(255,0,0,0.5)', fontWeight: '700', scale: 1, opacity: 1 });
+                } else {
+                    gsap.set(dot, { backgroundColor: '#00FF41', boxShadow: '0 0 15px #00FF41', scale: 1, opacity: 1 });
+                    gsap.set(label, { color: '#00FF41', textShadow: '0 0 8px rgba(0,255,65,0.5)', fontWeight: '700', scale: 1, opacity: 1 });
+                }
+
+                // Awwwards-Level Yoyo Pulse
+                activePulseTween1 = gsap.to(dot, {
+                    scale: 1.3,
+                    boxShadow: el.id === "chap-sem-03" ? '0 0 25px rgba(255,0,0,0.9)' : '0 0 25px rgba(0,255,65,0.9)',
+                    duration: 1.2,
+                    ease: "sine.inOut",
+                    yoyo: true,
+                    repeat: -1
+                });
+
+                activePulseTween2 = gsap.to(label, {
+                    textShadow: el.id === "chap-sem-03" ? '0 0 15px rgba(255,0,0,0.8)' : '0 0 15px rgba(0,255,65,0.8)',
+                    scale: 1.02,
+                    duration: 1.2,
+                    ease: "sine.inOut",
+                    yoyo: true,
+                    repeat: -1
+                });
+            } else {
+                gsap.set(dot, { backgroundColor: 'rgba(255,255,255,0.2)', boxShadow: 'none', scale: 1, opacity: 1 });
+                gsap.set(label, { color: 'rgba(255,255,255,0.4)', textShadow: 'none', fontWeight: '400', scale: 1, opacity: 1 });
+            }
+        });
+    }
+
+    function zoomInMasterTimeline(targetTick) {
+        timelineAnimating = true;
+        isMasterTimelineZoomed = true;
+        
+        updateTimelineState(targetTick);
+
+        if (targetTick === 1) {
+            gsap.to("#intro-title", { opacity: 0, duration: 1.2, pointerEvents: "none", ease: "expo.out" });
+        }
+
+        const tlEl = document.getElementById('master-timeline');
+        const chapters = document.querySelectorAll('.timeline-chapter');
+        const rect = tlEl.getBoundingClientRect();
+        const centerXOffset = - (window.innerWidth / 2) + rect.width / 2 + 32;
+
+        let tl = gsap.timeline({
+            onComplete: () => {
+                timelineAnimating = false;
+            }
+        });
+
+        tl.to("#timeline-gradient", { 
+            opacity: 0, 
+            duration: 1.2, 
+            ease: "expo.inOut" 
+        }, 0);
+
+        tl.to("#master-timeline-overlay", { 
+            opacity: 1, 
+            backdropFilter: "blur(15px)", 
+            duration: 1.2, 
+            ease: "expo.inOut" 
+        }, 0);
+
+        tl.to(tlEl, {
+            x: centerXOffset,
+            scale: 2.2,
+            opacity: 1,
+            duration: 1.2,
+            ease: "expo.inOut"
+        }, 0);
+
+        // Prep the stagger animation
+        gsap.set(chapters, { x: 20, filter: "blur(8px)" });
+        
+        tl.to(chapters, {
+            x: 0,
+            filter: "blur(0px)",
+            duration: 1.2,
+            ease: "expo.inOut",
+            stagger: 0.05
+        }, 0);
+    }
+
+    function zoomOutMasterTimeline() {
+        timelineAnimating = true;
+        isMasterTimelineZoomed = false;
+
+        let tl = gsap.timeline({
+            onComplete: () => {
+                timelineAnimating = false;
+                proceedWithTick();
+            }
+        });
+
+        const chapters = document.querySelectorAll('.timeline-chapter');
+
+        tl.to("#timeline-gradient", { 
+            opacity: 1, 
+            duration: 1.2, 
+            ease: "expo.inOut" 
+        }, 0);
+
+        tl.to("#master-timeline-overlay", { 
+            opacity: 0, 
+            backdropFilter: "blur(0px)", 
+            duration: 1.2, 
+            ease: "expo.inOut" 
+        }, 0);
+
+        tl.to(document.getElementById('master-timeline'), {
+            x: 0,
+            scale: 1,
+            duration: 1.2,
+            ease: "expo.inOut"
+        }, 0);
+
+        tl.to(chapters, {
+            x: 0,
+            filter: "blur(0px)",
+            duration: 1.2,
+            ease: "expo.inOut"
+        }, 0);
+    }
+
+    function proceedWithTick() {
+        if (window.presentation.currentTick < 19) {
+            window.presentation.nextTick();
+        } else if (presentationPhase2) {
+            presentationPhase2.nextTick();
+        }
+
+        let activeGlobalTick = window.presentation.currentTick;
+        if (activeGlobalTick >= 19 && presentationPhase2) {
+            if (presentationPhase2.currentTick >= 19) {
+                activeGlobalTick = presentationPhase2.currentTick;
+            }
+        }
+        updateTimelineState(activeGlobalTick);
+    }
+
+    function handleInteraction() {
+        if (isAnimating) return;
+        if (timelineAnimating) return;
+
+        if (isMasterTimelineZoomed) {
+            zoomOutMasterTimeline();
+            return;
+        }
+
+        let globalNextTick;
+        if (window.presentation.currentTick < 19) {
+            globalNextTick = window.presentation.currentTick + 1;
+        } else if (presentationPhase2) {
+            globalNextTick = presentationPhase2.currentTick + 1;
+        } else {
+            return;
+        }
+
+        if ([1, 6, 19, 27, 40].includes(globalNextTick) && lastZoomedTick !== globalNextTick) {
+            lastZoomedTick = globalNextTick;
+            zoomInMasterTimeline(globalNextTick);
+        } else {
+            proceedWithTick();
+        }
+    }
+
     window.addEventListener("keydown", (e) => {
         if (["Space", "ArrowRight", "PageDown", "ArrowDown"].includes(e.code)) {
             e.preventDefault();
-            if (window.presentation.currentTick < 19) {
+            handleInteraction();
+        }
+        
+        // --- DEV MODE JUMP ---
+        if (e.shiftKey && e.code === "KeyJ") {
+            e.preventDefault();
+            const input = prompt("DEV MODE: Jump to Tick (1-50):");
+            if (!input) return;
+            const targetTick = parseInt(input, 10);
+            if (isNaN(targetTick) || targetTick < 1 || targetTick > 50) return;
+
+            // Reset animation locks globally
+            isAnimating = false;
+            timelineAnimating = false;
+
+            if (targetTick < 19) {
+                window.presentation.currentTick = targetTick - 1;
                 window.presentation.nextTick();
-            } else if (presentationPhase2) {
-                presentationPhase2.nextTick();
+            } else {
+                // Handoff Security: Force Phase 2 visibility instantly
+                const uiContainer = document.getElementById('ui-container');
+                const threeCanvas = document.getElementById('three-canvas');
+                if (uiContainer) {
+                    uiContainer.style.visibility = 'visible';
+                    uiContainer.style.opacity = '1';
+                }
+                if (threeCanvas) {
+                    threeCanvas.style.visibility = 'visible';
+                    threeCanvas.style.opacity = '1';
+                }
+                const oldElements = document.querySelectorAll('main, #grid-background, #interface-container');
+                oldElements.forEach(el => {
+                    if (el) el.style.display = 'none';
+                });
+
+                // Jump logic
+                if (presentationPhase2) {
+                    presentationPhase2.currentTick = targetTick - 1;
+                    presentationPhase2.nextTick();
+                } else {
+                    console.warn("Dev Mode: Phase 2 not initialized yet. Skipping jump.");
+                }
             }
         }
     });
@@ -153,13 +391,11 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener("mousedown", (e) => {
         if (e.target.closest("a, button")) return;
         if (e.button === 0) {
-            if (window.presentation.currentTick < 19) {
-                window.presentation.nextTick();
-            } else if (presentationPhase2) {
-                presentationPhase2.nextTick();
-            }
+            handleInteraction();
         }
     });
+
+    updateTimelineState(0);
 
     function smoothScroll(targetY) {
         gsap.to(window, { scrollTo: targetY, duration: 1.5, ease: "power2.inOut" });

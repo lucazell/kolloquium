@@ -55,6 +55,23 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+
+        :root {
+            --safe-zone: 280px;
+        }
+
+        /* Ambient timeline backdrop */
+        #timeline-gradient {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: calc(var(--safe-zone) + 60px);
+            height: 100vh;
+            background: linear-gradient(to right, transparent, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0.98));
+            pointer-events: none;
+            z-index: 9000; /* Behind overlay, in front of content */
+            opacity: 0; /* Hidden on load */
+        }
     </style>
     <!-- Three.js Setup from Projekt A -->
     <script async src="https://unpkg.com/es-module-shims@1.8.0/dist/es-module-shims.js"></script>
@@ -97,7 +114,7 @@
     <main class="w-full">
 
         <!-- Section 1: Intro (Biography Timeline) -->
-        <section id="sec-intro" class="h-screen w-full relative overflow-hidden bg-black flex">
+        <section id="sec-intro" class="h-screen w-full relative overflow-hidden bg-black flex pr-[var(--safe-zone)] box-border">
 
             <!-- Mobile/Start Title -->
             <div id="intro-title"
@@ -110,10 +127,8 @@
             <!-- Left: Timeline (40%) -->
             <div
                 class="w-2/5 h-full relative z-20 flex flex-col justify-center pl-20 border-r border-white/10 bg-black">
-                <div id="timeline-rail" class="relative h-[60vh] border-l-2 border-white/20 ml-4">
-                    <!-- Progress Line -->
-                    <div id="timeline-line" class="absolute top-0 left-[-2px] w-[2px] bg-neon h-0 transition-none">
-                    </div>
+                <div id="timeline-rail" class="relative h-[60vh] ml-4">
+                    <!-- Progress Line Removed -->
 
                     <!-- Node 1: 2022 -->
                     <div class="timeline-node absolute top-[10%] -left-[6px] flex items-center gap-4 opacity-0"
@@ -163,8 +178,8 @@
 
             <!-- Final Overlay: Pragmatismus -->
             <div id="intro-pragmatism"
-                class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 scale-50 z-50 mix-blend-difference">
-                <h2 class="font-sans text-[12vw] font-black text-white tracking-tighter flex">
+                class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 scale-50 z-50 mix-blend-difference pr-[var(--safe-zone)] box-border">
+                <h2 class="font-sans text-[9vw] font-black text-white tracking-tighter flex">
                     <span class="char">P</span>
                     <span class="char">R</span>
                     <span class="char">A</span>
@@ -181,8 +196,8 @@
             </div>
         </section>
         <!-- Section 2: The Pro -->
-        <section id="sec-pro" class="h-screen w-full flex items-center justify-center relative bg-bg overflow-hidden">
-            <div id="grid-background"></div>
+        <section id="sec-pro" class="h-screen w-full flex items-center justify-center relative bg-bg overflow-hidden pr-[var(--safe-zone)] box-border">
+            <div id="grid-background" class="absolute inset-0 scale-x-[calc(100vw/(100vw-var(--safe-zone)))] origin-left"></div>
             <div id="main-content">
                 <div id="svg-container"></div>
                 <div id="banner-overlay"></div>
@@ -206,10 +221,10 @@
 
 
         <!-- Section 3: The Modular (Stepped Sequence) -->
-        <section id="sec-modular" class="h-screen w-full relative bg-black overflow-hidden">
+        <section id="sec-modular" class="h-screen w-full relative bg-black overflow-hidden pr-[var(--safe-zone)] box-border">
             <!-- TICK 1: Das Problem -->
             <div id="slide-0" class="slide active">
-                <div id="tick1-content">
+                <div id="tick1-content" class="w-full flex flex-col items-center">
                     <div id="counter-wrap">
                         <div id="counter">0000</div>
                     </div>
@@ -226,24 +241,34 @@
                         <div class="panel-body">
                             <div class="panel-svg-layer">
                                 <svg id="svg-stakeholder" viewBox="0 0 300 140" xmlns="http://www.w3.org/2000/svg">
-                                    <rect class="node" x="8" y="50" width="76" height="34" fill="none" stroke="#fff" stroke-width="1.5"/>
-                                    <text x="46" y="71" text-anchor="middle" fill="#fff" font-family="JetBrains Mono" font-size="9.5" font-weight="700">SCHÜLER</text>
-                                    <line class="connector" x1="84" y1="67" x2="118" y2="67" stroke="#fff" stroke-width="1.5" stroke-dasharray="34" stroke-dashoffset="34"/>
-                                    <rect class="node" x="118" y="50" width="64" height="34" fill="none" stroke="#fff" stroke-width="1.5"/>
-                                    <text x="150" y="71" text-anchor="middle" fill="#fff" font-family="JetBrains Mono" font-size="9.5" font-weight="700">UNI</text>
-                                    <line class="connector" x1="182" y1="67" x2="216" y2="67" stroke="#fff" stroke-width="1.5" stroke-dasharray="34" stroke-dashoffset="34"/>
-                                    <rect class="node" x="216" y="50" width="76" height="34" fill="none" stroke="#fff" stroke-width="1.5"/>
-                                    <text x="254" y="71" text-anchor="middle" fill="#fff" font-family="JetBrains Mono" font-size="9.5" font-weight="700">MARKT</text>
+                                    <rect class="node" x="8" y="50" width="76" height="34" fill="none" stroke="#fff"
+                                        stroke-width="1.5" />
+                                    <text x="46" y="71" text-anchor="middle" fill="#fff" font-family="JetBrains Mono"
+                                        font-size="9.5" font-weight="700">SCHÜLER</text>
+                                    <line class="connector" x1="84" y1="67" x2="118" y2="67" stroke="#fff"
+                                        stroke-width="1.5" stroke-dasharray="34" stroke-dashoffset="34" />
+                                    <rect class="node" x="118" y="50" width="64" height="34" fill="none" stroke="#fff"
+                                        stroke-width="1.5" />
+                                    <text x="150" y="71" text-anchor="middle" fill="#fff" font-family="JetBrains Mono"
+                                        font-size="9.5" font-weight="700">UNI</text>
+                                    <line class="connector" x1="182" y1="67" x2="216" y2="67" stroke="#fff"
+                                        stroke-width="1.5" stroke-dasharray="34" stroke-dashoffset="34" />
+                                    <rect class="node" x="216" y="50" width="76" height="34" fill="none" stroke="#fff"
+                                        stroke-width="1.5" />
+                                    <text x="254" y="71" text-anchor="middle" fill="#fff" font-family="JetBrains Mono"
+                                        font-size="9.5" font-weight="700">MARKT</text>
                                 </svg>
                             </div>
                             <div class="panel-ui-layer">
                                 <div class="chaos-checkboxes">
-                                    <span>[x] NC&#8209;Wert</span><span>[ ] Bundesland</span><span>[x] Praxisanteil</span>
+                                    <span>[x] NC&#8209;Wert</span><span>[ ] Bundesland</span><span>[x]
+                                        Praxisanteil</span>
                                     <span>[ ] Fachbereich</span><span>[x] Studienform</span><span>[ ] Zulassung</span>
                                     <span>[x] Semesterzahl</span><span>[ ] Sprache</span><span>[x] Akkreditierung</span>
                                     <span>[ ] Campusort</span><span>[x] NC&#8209;Wert</span><span>[ ] Prüfungsart</span>
                                     <span>[x] Studiengebühren</span><span>[ ] Abschluss</span><span>[x] Dauer</span>
-                                    <span>[ ] Hochschultyp</span><span>[x] Spezialisierung</span><span>[ ] Ranking</span>
+                                    <span>[ ] Hochschultyp</span><span>[x] Spezialisierung</span><span>[ ]
+                                        Ranking</span>
                                 </div>
                             </div>
                         </div>
@@ -255,21 +280,33 @@
                         <div class="panel-body">
                             <div class="panel-svg-layer">
                                 <svg id="svg-journey" viewBox="0 0 300 150" xmlns="http://www.w3.org/2000/svg">
-                                    <line x1="30" y1="20" x2="30" y2="125" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
-                                    <line x1="30" y1="125" x2="280" y2="125" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
-                                    <polyline id="journey-line" points="40,50 75,38 105,58 135,82 165,110 195,122 230,116 265,95" fill="none" stroke="#fff" stroke-width="2.5" stroke-dasharray="400" stroke-dashoffset="400"/>
-                                    <circle id="drop-point" cx="195" cy="122" r="0" fill="#39FF14"/>
-                                    <circle id="drop-point-ring" cx="195" cy="122" r="0" fill="none" stroke="#39FF14" stroke-width="1" opacity="0"/>
+                                    <line x1="30" y1="20" x2="30" y2="125" stroke="rgba(255,255,255,0.12)"
+                                        stroke-width="1" />
+                                    <line x1="30" y1="125" x2="280" y2="125" stroke="rgba(255,255,255,0.12)"
+                                        stroke-width="1" />
+                                    <polyline id="journey-line"
+                                        points="40,50 75,38 105,58 135,82 165,110 195,122 230,116 265,95" fill="none"
+                                        stroke="#fff" stroke-width="2.5" stroke-dasharray="400"
+                                        stroke-dashoffset="400" />
+                                    <circle id="drop-point" cx="195" cy="122" r="0" fill="#39FF14" />
+                                    <circle id="drop-point-ring" cx="195" cy="122" r="0" fill="none" stroke="#39FF14"
+                                        stroke-width="1" opacity="0" />
                                 </svg>
                             </div>
                             <div class="panel-ui-layer">
                                 <div class="chaos-sliders">
-                                    <div class="slider-row"><span class="slider-label">NC&#8209;WERT</span><span class="slider-track">──────[●]────</span></div>
-                                    <div class="slider-row"><span class="slider-label">ENTFERNUNG</span><span class="slider-track">──[●]────────</span></div>
-                                    <div class="slider-row"><span class="slider-label">PRAXISANTEIL</span><span class="slider-track">─────[●]─────</span></div>
-                                    <div class="slider-row"><span class="slider-label">KOSTEN</span><span class="slider-track">───────[●]───</span></div>
-                                    <div class="slider-row"><span class="slider-label">REPUTATION</span><span class="slider-track">──────[●]────</span></div>
-                                    <div class="slider-row"><span class="slider-label">DAUER</span><span class="slider-track">─[●]─────────</span></div>
+                                    <div class="slider-row"><span class="slider-label">NC&#8209;WERT</span><span
+                                            class="slider-track">──────[●]────</span></div>
+                                    <div class="slider-row"><span class="slider-label">ENTFERNUNG</span><span
+                                            class="slider-track">──[●]────────</span></div>
+                                    <div class="slider-row"><span class="slider-label">PRAXISANTEIL</span><span
+                                            class="slider-track">─────[●]─────</span></div>
+                                    <div class="slider-row"><span class="slider-label">KOSTEN</span><span
+                                            class="slider-track">───────[●]───</span></div>
+                                    <div class="slider-row"><span class="slider-label">REPUTATION</span><span
+                                            class="slider-track">──────[●]────</span></div>
+                                    <div class="slider-row"><span class="slider-label">DAUER</span><span
+                                            class="slider-track">─[●]─────────</span></div>
                                 </div>
                             </div>
                         </div>
@@ -283,17 +320,20 @@
                                 <div class="ascii-bars">
                                     <div class="bar-row">
                                         <span class="bar-label">OVERWHELM</span>
-                                        <span class="bar-track"><span class="bar-fill" data-pct="89">░░░░░░░░░░</span></span>
+                                        <span class="bar-track"><span class="bar-fill"
+                                                data-pct="89">░░░░░░░░░░</span></span>
                                         <span class="bar-pct">89%</span>
                                     </div>
                                     <div class="bar-row">
                                         <span class="bar-label">CLARITY</span>
-                                        <span class="bar-track"><span class="bar-fill" data-pct="21">░░░░░░░░░░</span></span>
+                                        <span class="bar-track"><span class="bar-fill"
+                                                data-pct="21">░░░░░░░░░░</span></span>
                                         <span class="bar-pct">21%</span>
                                     </div>
                                     <div class="bar-row">
                                         <span class="bar-label">DROPOUT</span>
-                                        <span class="bar-track"><span class="bar-fill" data-pct="78">░░░░░░░░░░</span></span>
+                                        <span class="bar-track"><span class="bar-fill"
+                                                data-pct="78">░░░░░░░░░░</span></span>
                                         <span class="bar-pct">78%</span>
                                     </div>
                                 </div>
@@ -343,7 +383,7 @@
 
     </main>
 
-    <div id="interface-container">
+    <div id="interface-container" class="pr-[var(--safe-zone)] box-border">
         <video id="onboarding-video" src="assets/section_2/mockup_richardt_mobile.mp4" playsinline muted></video>
         <div id="kpi-overlay">
             <div class="kpi-item" id="kpi-time">TIME: 14_DAYS</div>
@@ -354,7 +394,7 @@
     <!-- Elements from Projekt A -->
     <div id="flash-overlay"></div>
 
-    <div id="zoom-container">
+    <div id="zoom-container" class="pr-[var(--safe-zone)] box-border">
         <div id="grid-lines"></div>
         <div id="grid-labels">
             <div class="serif-label">Grid-Structure</div>
@@ -376,17 +416,17 @@
         </div>
     </div>
 
-    <div id="mount-terminal">
+    <div id="mount-terminal" class="pr-[var(--safe-zone)] box-border">
         <div id="mount-content"></div>
     </div>
 
-    <div id="mic-drop-container">
+    <div id="mic-drop-container" class="pr-[var(--safe-zone)] box-border">
 
         <div id="foundation-line"></div>
         <div id="final-text">NEXT:<br>100% INTERFACE</div>
     </div>
 
-    <div id="ui-container">
+    <div id="ui-container" class="pr-[var(--safe-zone)] box-border">
         <!-- TICK 1: The Void -->
         <div id="tick-1" class="tick">
             <div id="phone-frame"></div>
@@ -404,7 +444,8 @@
         </div>
 
         <div id="matchcut-overlay">
-            <video id="matchcut-video-1" class="poster-video" src="assets/wiredundweird/zeitimraum.mp4" muted loop playsinline></video>
+            <video id="matchcut-video-1" class="poster-video" src="assets/wiredundweird/zeitimraum.mp4" muted loop
+                playsinline></video>
             <video id="matchcut-video-2" class="poster-video" src="assets/wiredundweird/zeitimraum.mp4" muted loop
                 playsinline></video>
         </div>
@@ -429,6 +470,37 @@
     </div>
 
     <canvas id="three-canvas"></canvas>
+
+    <!-- Phase 2 Master Timeline Gradient & UI -->
+    <div id="timeline-gradient" class="opacity-0"></div>
+    <div id="master-timeline-overlay" class="fixed inset-0 bg-black/85 z-[9001] pointer-events-none opacity-0"></div>
+    
+    <div id="master-timeline"
+        class="fixed right-8 top-1/2 -translate-y-1/2 z-[9002] flex flex-col gap-6 pointer-events-none font-mono text-xs text-right opacity-0"
+        style="transform-origin: center center;">
+        <div class="timeline-chapter flex items-center justify-end gap-3" data-chapter="1" id="chap-pre-study">
+            <div class="chapter-label text-white/50 tracking-widest">INIT: STATUS_QUO</div>
+            <div class="glow-dot w-2 h-2 rounded-full bg-white/20"></div>
+        </div>
+        <div class="timeline-chapter flex items-center justify-end gap-3" data-chapter="2" id="chap-sem-01">
+            <div class="chapter-label text-white/50 tracking-widest">MOD_01: SYSTEM_HALT</div>
+            <div class="glow-dot w-2 h-2 rounded-full bg-white/20"></div>
+        </div>
+        <div class="timeline-chapter flex items-center justify-end gap-3" data-chapter="3" id="chap-sem-02">
+            <div class="chapter-label text-white/50 tracking-widest">MOD_02: NERVENSYSTEM</div>
+            <div class="glow-dot w-2 h-2 rounded-full bg-white/20"></div>
+        </div>
+        <div class="timeline-chapter flex items-center justify-end gap-3" data-chapter="4" id="chap-sem-03">
+            <div class="chapter-label text-white/50 tracking-widest">ERR_03: ANALOG_CLASH</div>
+            <div class="glow-dot w-2 h-2 rounded-full bg-white/20"></div>
+        </div>
+        <div class="timeline-chapter flex items-center justify-end gap-3" data-chapter="5" id="chap-outro">
+            <div class="chapter-label text-white/50 tracking-widest">OUT_04: SYSTEM_BILANZ</div>
+            <div class="glow-dot w-2 h-2 rounded-full bg-white/20"></div>
+        </div>
+        <!-- connecting vertical rail -->
+        <div class="absolute right-[3px] top-[10px] bottom-[10px] w-[2px] bg-white/10 -z-10 rounded-full"></div>
+    </div>
 
     <script type="module" src="script.js"></script>
 </body>

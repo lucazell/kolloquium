@@ -331,7 +331,7 @@ body {
 
 #onboarding-video {
     max-height: 85vh;
-    max-width: 90vw;
+    max-width: calc(100vw - var(--safe-zone, 280px) - 4rem);
     border-radius: 0;
     /* Pure frameless */
     box-shadow: 0 0 50px rgba(255, 255, 255, 0.05);
@@ -371,6 +371,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    padding-right: var(--safe-zone, 280px);
+    box-sizing: border-box;
 }
 
 .slide.off     { display: none; }
@@ -414,6 +416,7 @@ body {
     grid-template-columns: 1fr 1fr 1fr;
     gap: 1.5vw;
     width: 100%;
+    max-width: calc(100vw - var(--safe-zone, 280px) - 6rem);
     height: 80vh;
 }
 
@@ -577,7 +580,7 @@ body {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) scale(1.04);
+    transform: translate(calc(-50% - calc(var(--safe-zone, 280px) / 2)), -50%) scale(1.04);
     background: #000;
     border: 2px solid rgba(255,255,255,0.9);
     padding: 3.5rem 5rem;
@@ -591,7 +594,7 @@ body {
 
 #quote-slam.slammed {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+    transform: translate(calc(-50% - calc(var(--safe-zone, 280px) / 2)), -50%) scale(1);
     transition: opacity 0.08s ease, transform 0.12s cubic-bezier(0.16,1,0.3,1);
 }
 
@@ -669,7 +672,7 @@ body {
 #proof-frame video {
     display: block;
     max-height: 82vh;
-    max-width: 90vw;
+    max-width: calc(100vw - var(--safe-zone, 280px) - 6rem);
     width: auto;
     height: auto;
     object-fit: contain;
@@ -881,7 +884,7 @@ code,
     position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) scale(0.8);
+    transform: translate(calc(-50% - calc(var(--safe-zone, 280px) / 2)), -50%) scale(0.8);
     background: #050505;
     border: 2px solid var(--neon-green);
     box-shadow: 0 0 20px rgba(57, 255, 20, 0.4);
@@ -894,7 +897,7 @@ code,
 
 #filter-box.active {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+    transform: translate(calc(-50% - calc(var(--safe-zone, 280px) / 2)), -50%) scale(1);
 }
 
 .formula {
@@ -994,7 +997,7 @@ code,
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(calc(-50% - calc(var(--safe-zone, 280px) / 2)), -50%);
     font-family: 'JetBrains Mono', monospace;
     font-size: 6vw;
     font-weight: 900;
@@ -1024,7 +1027,7 @@ code,
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(calc(-50% - calc(var(--safe-zone, 280px) / 2)), -50%);
     width: 400px;
     height: 300px;
     display: none;
@@ -1219,13 +1222,20 @@ code,
     transition: none !important;
 }
 
-/* GLOBAL DIM */
-body {
-    transition: filter 3s ease-in-out;
+/* GLOBAL DIM VIA OVERLAY (Protects HUD) */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.95);
+    z-index: 8999; /* Just beneath the Master Timeline (9000+) */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 3s ease-in-out;
 }
 
-body.dimmed {
-    filter: brightness(0.05);
+body.dimmed::after {
+    opacity: 1;
 }
 
 /* CLASH CONTAINER (SECTION 4) */
@@ -1341,7 +1351,7 @@ body.dimmed {
     left: 50%;
     width: 100vw;
     height: 100vh;
-    transform: translate(calc(-50% + var(--offset-x)), calc(-50% + var(--offset-y)));
+    transform: translate(calc(-50% + var(--offset-x) - calc(var(--safe-zone, 280px) / 2)), calc(-50% + var(--offset-y)));
     z-index: 90;
     opacity: 0;
     transition: opacity 1.5s ease, transform 2.5s cubic-bezier(0.65, 0, 0.35, 1);
@@ -1361,7 +1371,7 @@ body.dimmed {
     gap: 40px;
     width: 90vw;
     /* Narrower to fit both */
-    transform: translate(-50%, -50%);
+    transform: translate(calc(-50% - calc(var(--safe-zone, 280px) / 2)), -50%);
     /* Always centered in dual shot */
 }
 
