@@ -67,10 +67,12 @@
             right: 0;
             width: calc(var(--safe-zone) + 60px);
             height: 100vh;
-            background: linear-gradient(to right, transparent, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0.98));
+            background: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.85) 50%, rgba(0, 0, 0, 0.98));
             pointer-events: none;
-            z-index: 9000; /* Behind overlay, in front of content */
-            opacity: 0; /* Hidden on load */
+            z-index: 9000;
+            /* Behind overlay, in front of content */
+            opacity: 0;
+            /* Hidden on load */
         }
     </style>
     <!-- Three.js Setup from Projekt A -->
@@ -114,7 +116,8 @@
     <main class="w-full">
 
         <!-- Section 1: Intro (Biography Timeline) -->
-        <section id="sec-intro" class="h-screen w-full relative overflow-hidden bg-black flex pr-[var(--safe-zone)] box-border">
+        <section id="sec-intro"
+            class="h-screen w-full relative overflow-hidden bg-black flex pr-[var(--safe-zone)] box-border">
 
             <!-- Mobile/Start Title -->
             <div id="intro-title"
@@ -146,7 +149,7 @@
                         <div class="w-3 h-3 rounded-full bg-neon shadow-[0_0_10px_#00FF41]"></div>
                         <div>
                             <div class="font-mono text-xs text-white/50">2023</div>
-                            <div class="font-sans text-2xl font-bold">SOUTH AFRICA</div>
+                            <div class="font-sans text-2xl font-bold">Südafrika</div>
                         </div>
                     </div>
 
@@ -156,16 +159,16 @@
                         <div class="w-3 h-3 rounded-full bg-neon shadow-[0_0_10px_#00FF41]"></div>
                         <div>
                             <div class="font-mono text-xs text-white/50">2024</div>
-                            <div class="font-sans text-2xl font-bold">REALITY CHECK</div>
+                            <div class="font-sans text-2xl font-bold">Krankentransport</div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Right: Images (60%) -->
-            <div class="w-3/5 h-full relative z-10 bg-[#050505]">
+            <div class="w-3/5 h-full relative z-10 bg-[#1F1F1F]">
                 <!-- Image 1: Agency -->
-                <div id="bio-img-agency" class="absolute inset-0 bg-cover bg-center grayscale opacity-0"
+                <div id="bio-img-agency" class="absolute inset-0 bg-cover bg-center grayscale opacity-10"
                     style="background-image: url('assets/glockundzell.png');">
                 </div>
                 <!-- Image 2: Reset -->
@@ -173,31 +176,69 @@
                     style="background-image: url('assets/social_portrait.jpg');"></div>
                 <!-- Image 3: Reality -->
                 <div id="bio-img-reality" class="absolute inset-0 bg-cover bg-center grayscale opacity-0"
-                    style="background-image: url('assets/realities.jpg');"></div>
+                    style="background-image: url('assets/taxi.png');">
+                    <div
+                        class="absolute bottom-6 right-6 text-white/100 font-mono text-[12px] tracking-[0.2em] text-right uppercase mix-blend-difference pointer-events-none">
+                        *Bild KI-generiert
+                    </div>
+                </div>
             </div>
 
             <!-- Final Overlay: Pragmatismus -->
             <div id="intro-pragmatism"
                 class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 scale-50 z-50 mix-blend-difference pr-[var(--safe-zone)] box-border">
-                <h2 class="font-sans text-[9vw] font-black text-white tracking-tighter flex">
-                    <span class="char">P</span>
-                    <span class="char">R</span>
-                    <span class="char">A</span>
-                    <span class="char">G</span>
-                    <span class="char">M</span>
-                    <span class="char">A</span>
-                    <span class="char">T</span>
-                    <span class="char">I</span>
-                    <span class="char">S</span>
-                    <span class="char">M</span>
-                    <span class="char">U</span>
-                    <span class="char">S</span>
-                </h2>
+                <div id="pragmatism-wrapper" class="relative flex items-center justify-center w-full h-full">
+                    
+                    <!-- Text Layer (z-10 to stay above popups mostly) -->
+                    <h2 class="font-sans text-[9vw] font-black text-white flex justify-center gap-[-0.03em] leading-none z-10 relative">
+                        <span class="char">P</span><span class="char">R</span><span class="char">A</span><span
+                            class="char -ml-[0.06em]">G</span><span class="char">M</span><span class="char">A</span><span
+                            class="char -ml-[0.11em]">T</span><span class="char">I</span><span class="char">S</span><span
+                            class="char">M</span><span class="char">U</span><span class="char">S</span>
+                    </h2>
+                    
+                    <!-- Evidence Pop-ups -->
+                    <div id="project-popups" class="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+                        <!-- Popup 1 (Left) -->
+                        <div class="project-popup absolute w-64 h-48 border border-white/20 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-2xl flex items-center justify-center opacity-0 -translate-x-80 -translate-y-20 rotate-[-8deg] overflow-hidden bg-black/80">
+                            <img src="assets/sem1/book1.gif" class="absolute inset-0 w-full h-full object-cover opacity-80 mix-blend-screen">
+                            <div class="absolute inset-0 shadow-[inset_0_0_20px_rgba(255,255,255,0.1)] rounded-2xl pointer-events-none"></div>
+                            <span class="font-mono text-[10px] text-white bg-black/60 backdrop-blur-md px-2 py-1 rounded border border-white/10 absolute bottom-3 right-3 z-10">SYS.EVIDENCE.01</span>
+                        </div>
+                        <!-- Popup 2 (Right) -->
+                        <div class="project-popup absolute w-48 h-64 border border-white/20 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-2xl flex items-center justify-center opacity-0 translate-x-80 -translate-y-10 rotate-[5deg] overflow-hidden bg-black/80">
+                            <img src="assets/sem1/book2.gif" class="absolute inset-0 w-full h-full object-cover opacity-80 mix-blend-screen">
+                            <div class="absolute inset-0 shadow-[inset_0_0_20px_rgba(255,255,255,0.1)] rounded-2xl pointer-events-none"></div>
+                            <span class="font-mono text-[10px] text-white bg-black/60 backdrop-blur-md px-2 py-1 rounded border border-white/10 absolute bottom-3 right-3 z-10">SYS.EVIDENCE.02</span>
+                        </div>
+                        <!-- Popup 3 (Bottom Center) -->
+                        <div class="project-popup absolute w-36 h-[312px] border border-white/20 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-2xl flex items-center justify-center opacity-0 -translate-x-44 translate-y-32 rotate-[3deg] overflow-hidden bg-black/80">
+                            <img src="assets/sem1/app1.gif" class="absolute inset-0 w-full h-full object-cover opacity-80 mix-blend-screen">
+                            <div class="absolute inset-0 shadow-[inset_0_0_20px_rgba(255,255,255,0.1)] rounded-2xl pointer-events-none"></div>
+                            <span class="font-mono text-[10px] text-white bg-black/60 backdrop-blur-md px-2 py-1 rounded border border-white/10 absolute bottom-3 right-3 z-10">SYS.APP.03</span>
+                        </div>
+                        <!-- Popup 4 (Top) -->
+                        <div class="project-popup absolute w-80 h-[180px] border border-white/20 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-2xl flex items-center justify-center opacity-0 translate-x-32 -translate-y-48 rotate-[-4deg] overflow-hidden bg-black/80">
+                            <img src="assets/sem1/zell_luca_schach_v4.png" class="absolute inset-0 w-full h-full object-cover opacity-80 mix-blend-screen">
+                            <div class="absolute inset-0 shadow-[inset_0_0_20px_rgba(255,255,255,0.1)] rounded-2xl pointer-events-none"></div>
+                            <span class="font-mono text-[10px] text-white bg-black/60 backdrop-blur-md px-2 py-1 rounded border border-white/10 absolute bottom-3 right-3 z-10">SYS.CHESS.04</span>
+                        </div>
+                        <!-- Popup 5 (Bottom Right) -->
+                        <div class="project-popup absolute w-72 h-[162px] border border-white/20 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-2xl flex items-center justify-center opacity-0 translate-x-80 translate-y-36 rotate-[4deg] overflow-hidden bg-black/80">
+                            <video src="assets/sem1/sound-pad.mp4" autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover opacity-80 mix-blend-screen"></video>
+                            <div class="absolute inset-0 shadow-[inset_0_0_20px_rgba(255,255,255,0.1)] rounded-2xl pointer-events-none"></div>
+                            <span class="font-mono text-[10px] text-white bg-black/60 backdrop-blur-md px-2 py-1 rounded border border-white/10 absolute bottom-3 right-3 z-10">SYS.SOUND.05</span>
+                        </div>
+                    </div>
+                    
+                </div>
             </div>
         </section>
         <!-- Section 2: The Pro -->
-        <section id="sec-pro" class="h-screen w-full flex items-center justify-center relative bg-bg overflow-hidden pr-[var(--safe-zone)] box-border">
-            <div id="grid-background" class="absolute inset-0 scale-x-[calc(100vw/(100vw-var(--safe-zone)))] origin-left"></div>
+        <section id="sec-pro"
+            class="h-screen w-full flex items-center justify-center relative bg-bg overflow-hidden pr-[var(--safe-zone)] box-border">
+            <div id="grid-background"
+                class="absolute inset-0 scale-x-[calc(100vw/(100vw-var(--safe-zone)))] origin-left"></div>
             <div id="main-content">
                 <div id="svg-container"></div>
                 <div id="banner-overlay"></div>
@@ -221,7 +262,8 @@
 
 
         <!-- Section 3: The Modular (Stepped Sequence) -->
-        <section id="sec-modular" class="h-screen w-full relative bg-black overflow-hidden pr-[var(--safe-zone)] box-border">
+        <section id="sec-modular"
+            class="h-screen w-full relative bg-black overflow-hidden pr-[var(--safe-zone)] box-border">
             <!-- TICK 1: Das Problem -->
             <div id="slide-0" class="slide active">
                 <div id="tick1-content" class="w-full flex flex-col items-center">
@@ -474,7 +516,7 @@
     <!-- Phase 2 Master Timeline Gradient & UI -->
     <div id="timeline-gradient" class="opacity-0"></div>
     <div id="master-timeline-overlay" class="fixed inset-0 bg-black/85 z-[9001] pointer-events-none opacity-0"></div>
-    
+
     <div id="master-timeline"
         class="fixed right-8 top-1/2 -translate-y-1/2 z-[9002] flex flex-col gap-6 pointer-events-none font-mono text-xs text-right opacity-0"
         style="transform-origin: center center;">

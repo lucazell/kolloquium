@@ -42,13 +42,22 @@ document.addEventListener("DOMContentLoaded", () => {
             isAnimating = true;
             this.executeTick();
         },
+        triggerWordShatterEffect: function() {
+            // Preserved for later use (e.g. Analog Clash transition)
+            gsap.to("#intro-pragmatism .char", {
+                y: () => 100 + Math.random() * 400,
+                x: () => (Math.random() - 0.5) * 200,
+                rotation: () => (Math.random() - 0.5) * 90,
+                opacity: 0, filter: "blur(10px)", duration: 2,
+                stagger: { amount: 0.8, from: "random" }
+            });
+        },
         executeTick: function() {
             const unlock = (delay = 1000) => setTimeout(() => { isAnimating = false; }, delay);
             switch(this.currentTick) {
                 // Section 1: Intro
                 case 1:
                     gsap.to("#intro-title", { opacity: 0, pointerEvents: "none", duration: 1 });
-                    gsap.to(["#master-timeline", "#timeline-gradient"], { opacity: 1, duration: 1, ease: "power2.inOut" });
                     gsap.to("#node-2022", { opacity: 1, x: 10, duration: 0.5, delay: 0.5 });
                     gsap.to("#bio-img-agency", { opacity: 1, duration: 1 });
                     unlock(1000); break;
@@ -63,29 +72,50 @@ document.addEventListener("DOMContentLoaded", () => {
                     gsap.to("#bio-img-reality", { opacity: 1, duration: 0.5, delay: 0.5 });
                     unlock(1000); break;
                 case 4:
-                    gsap.to([".timeline-node", "#bio-img-reality", "#timeline-rail"], {
+                    gsap.to([".timeline-node", "#timeline-rail"], {
                         opacity: 0, filter: "blur(10px)", duration: 0.5
+                    });
+                    gsap.to("#bio-img-reality", {
+                        opacity: 0, duration: 0.5
                     });
                     gsap.to(["#sec-intro > div.w-2\\/5", "#sec-intro > div.w-3\\/5"], {
                         borderColor: "transparent", backgroundColor: "#000000", duration: 0.5
                     });
-                    gsap.to("#intro-pragmatism", { opacity: 1, scale: 1, duration: 0.5 });
-                    unlock(500); break;
+                    gsap.set("#intro-pragmatism", { scale: 4, opacity: 0 });
+                    gsap.to("#intro-pragmatism", { opacity: 1, scale: 1, duration: 0.8, ease: "power2.out" });
+                    unlock(800); break;
                 case 5:
-                    gsap.to("#intro-pragmatism .char", {
-                        y: () => 100 + Math.random() * 400,
-                        x: () => (Math.random() - 0.5) * 200,
-                        rotation: () => (Math.random() - 0.5) * 90,
-                        opacity: 0, filter: "blur(10px)", duration: 2,
-                        stagger: { amount: 0.8, from: "random" }
+                    // Spatial UI Popups (Evidence)
+                    gsap.to(".project-popup", {
+                        opacity: 1,
+                        x: "+=0", y: "+=0", 
+                        rotationX: () => (Math.random() - 0.5) * 25,
+                        rotationY: () => (Math.random() - 0.5) * 25,
+                        duration: 1.2,
+                        stagger: 0.15,
+                        ease: "back.out(2)"
                     });
-                    unlock(2000); break;
+                    unlock(1200); break;
                 case 6:
-                    gsap.to(window, { scrollTo: "#sec-pro", duration: 1.5, ease: "power2.inOut", onComplete: () => {
-                        document.getElementById("status-text").innerText = "STATUS: SYSTEM_MADNESS";
-                        document.getElementById("status-dot").classList.replace("bg-neon", "bg-alert");
-                        isAnimating = false;
-                    }});
+                    // Transition Section 1 elements out
+                    gsap.to("#pragmatism-wrapper", {
+                        opacity: 0,
+                        filter: "blur(10px)",
+                        duration: 1.2,
+                        ease: "power2.in"
+                    });
+                    
+                    gsap.to(window, {
+                        scrollTo: "#sec-pro",
+                        duration: 1.5,
+                        delay: 0.2,
+                        ease: "power2.inOut",
+                        onComplete: () => {
+                            document.getElementById("status-text").innerText = "STATUS: SYSTEM_MADNESS";
+                            document.getElementById("status-dot").classList.replace("bg-neon", "bg-alert");
+                            isAnimating = false;
+                        }
+                    });
                     break;
                 // Section 2: Pro Madness
                 case 7: currentStep = 1; startDrawing(); unlock(1000); break;
@@ -211,6 +241,12 @@ document.addEventListener("DOMContentLoaded", () => {
         if (targetTick === 1) {
             gsap.to("#intro-title", { opacity: 0, duration: 1.2, pointerEvents: "none", ease: "expo.out" });
         }
+        
+        if (targetTick === 6) {
+            // Synchronize with Section 1 -> 2 transition
+            window.presentation.currentTick = 6;
+            window.presentation.executeTick(6);
+        }
 
         const tlEl = document.getElementById('master-timeline');
         const chapters = document.querySelectorAll('.timeline-chapter');
@@ -331,7 +367,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        if ([1, 6, 19, 27, 40].includes(globalNextTick) && lastZoomedTick !== globalNextTick) {
+        if ([1, 6, 19, 29, 44].includes(globalNextTick) && lastZoomedTick !== globalNextTick) {
             lastZoomedTick = globalNextTick;
             zoomInMasterTimeline(globalNextTick);
         } else {
@@ -546,7 +582,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (length > 0) {
                         el.style.strokeDasharray = length;
                         el.style.strokeDashoffset = length;
-                        el.style.opacity = '1';
+                        el.style.opacity = '0'; // Keep hidden until drawn to avoid dots
 
                         const layerDelay = layerIndex * 800;
                         const elementDelay = index * 12;
@@ -619,7 +655,8 @@ document.addEventListener("DOMContentLoaded", () => {
             item.timeoutId = setTimeout(() => {
                 if (currentStep !== 1) return;
                 if (item.isLength) {
-                    item.el.style.transition = 'stroke-dashoffset 2s cubic-bezier(0.16, 1, 0.3, 1)';
+                    item.el.style.opacity = '1';
+                    item.el.style.transition = 'stroke-dashoffset 2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.1s ease';
                     item.el.style.strokeDashoffset = '0';
                 } else {
                     item.el.style.opacity = '1';
@@ -741,8 +778,12 @@ document.addEventListener("DOMContentLoaded", () => {
         drawAnimationElements.forEach(item => {
             if (item.timeoutId) clearTimeout(item.timeoutId);
             item.el.style.transition = 'none';
-            if (item.isLength) item.el.style.strokeDashoffset = item.lengthVal;
-            else item.el.style.opacity = '0';
+            if (item.isLength) {
+                item.el.style.strokeDashoffset = item.lengthVal;
+                item.el.style.opacity = '0';
+            } else {
+                item.el.style.opacity = '0';
+            }
         });
     }
 
