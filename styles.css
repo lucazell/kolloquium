@@ -228,26 +228,33 @@ body {
     transition: height 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
 }
 
-#qr-container {
+#baustelle-container {
     position: absolute;
+    top: 50%;
+    left: 30%; /* Shifted further left to target the scaffolding area */
+    transform: translate(-50%, -50%);
+    width: 720px; /* Increased from 600px for more visual punch */
+    height: 480px; /* Maintaining 1.5 ratio (720 / 480 = 1.5) */
     z-index: 15;
     opacity: 0;
     pointer-events: none;
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: opacity 0.5s ease, transform 0.8s cubic-bezier(0.7, 0, 0.3, 1), filter 0.8s ease;
+    transition: opacity 0.5s ease, transform 0.8s cubic-bezier(0.7,0,0.3,1), filter 0.8s ease;
     filter: brightness(1) blur(0);
 }
 
-#qr-container img {
-    width: 80%;
-    height: 80%;
-    object-fit: contain;
+#baustelle-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
-#qr-container.melt {
+#baustelle-container.melt {
     opacity: 0;
+    transform: none; /* Already positioned absolutely by JS now */
+    transform-origin: center center;
     transform: translateY(20px) scale(0.95);
     filter: brightness(1.5) blur(15px);
 }
@@ -293,7 +300,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding-left: 5vw;
+    padding-left: 10vw; /* Increased from 5vw to avoid left edge clipping */
     font-family: 'JetBrains Mono', monospace;
     color: #39FF14;
     text-transform: uppercase;
@@ -317,7 +324,7 @@ body {
 }
 
 #kpi-status {
-    padding-left: 10vw;
+    padding-left: 8vw; /* Proportional offset from the new overlay padding */
 }
 
 #interface-container.kpi-visible .kpi-item {
@@ -1220,6 +1227,42 @@ code,
 .shock-brightness {
     filter: brightness(1) !important;
     transition: none !important;
+}
+
+/* === PHOTOSHOP EASTER EGG === */
+#crash-sequence {
+    perspective: 2000px;
+}
+
+#photoshop-desktop {
+    background: #000;
+}
+
+#photoshop-icon img {
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+}
+
+#mouse-cursor {
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+#photoshop-window {
+    transform-style: preserve-3d;
+    background: #1e1e1e;
+    width: 75vw;
+    max-width: 1000px;
+    aspect-ratio: 1600 / 980;
+    height: auto;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+#photoshop-window img {
+    object-fit: contain;
+}
+
+#adobe-popup {
+    z-index: 10;
+    box-shadow: 0 50px 120px rgba(0, 0, 0, 1);
 }
 
 /* GLOBAL DIM VIA OVERLAY (Protects HUD) */

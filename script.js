@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.presentation = {
         currentTick: 0,
         nextTick: function() {
-            if (isAnimating || this.currentTick >= 19) return;
+            if (isAnimating || this.currentTick >= 22) return;
             this.currentTick++;
             isAnimating = true;
             this.executeTick();
@@ -57,59 +57,97 @@ document.addEventListener("DOMContentLoaded", () => {
             switch(this.currentTick) {
                 // Section 1: Intro
                 case 1:
-                    gsap.to("#intro-title", { opacity: 0, pointerEvents: "none", duration: 1 });
-                    gsap.to("#node-2022", { opacity: 1, x: 10, duration: 0.5, delay: 0.5 });
-                    gsap.to("#bio-img-agency", { opacity: 1, duration: 1 });
-                    unlock(1000); break;
+                    const hackTl = gsap.timeline({
+                        onComplete: () => unlock(500)
+                    });
+                    gsap.set("#intro-title", { opacity: 0, pointerEvents: "none" });
+                    hackTl.to(["#crash-sequence", "#photoshop-desktop"], { opacity: 1, duration: 0.5 });
+                    hackTl.fromTo("#mouse-cursor", 
+                        { opacity: 0, x: "20vw", y: "20vh" }, 
+                        { opacity: 1, x: 0, y: 0, duration: 1.2, ease: "power2.inOut" }, 
+                        "+=0.2"
+                    );
+                    hackTl.to("#photoshop-icon", { scale: 0.9, duration: 0.1, repeat: 1, yoyo: true }, "+=0.2");
+                    hackTl.to(["#photoshop-desktop", "#mouse-cursor"], { opacity: 0, duration: 0.2 }, "+=0.3");
+                    hackTl.fromTo("#photoshop-window", 
+                        { scale: 0.8, opacity: 0 }, 
+                        { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(1.5)" }
+                    );
+                    hackTl.fromTo("#adobe-popup", 
+                        { scale: 1.1, opacity: 0 }, 
+                        { scale: 1, opacity: 1, duration: 0.2, ease: "expo.out" }, 
+                        "+=1.0"
+                    );
+                    break;
+
                 case 2:
-                    gsap.to("#node-2023", { opacity: 1, x: 10, duration: 0.5, delay: 0.5 });
-                    gsap.to("#bio-img-agency", { opacity: 0, duration: 0.5 });
-                    gsap.to("#bio-img-reset", { opacity: 1, duration: 0.5, delay: 0.5 });
-                    unlock(1000); break;
+                    // Abrupt Kill - Scale windows to 0, Photoshop Icon becomes visible again
+                    gsap.to(["#photoshop-window", "#adobe-popup"], { 
+                        scale: 0, opacity: 0, duration: 0.2, ease: "power2.in"
+                    });
+                    gsap.to("#photoshop-desktop", { opacity: 1, duration: 0.3, onComplete: () => unlock(500) });
+                    break;
+
                 case 3:
-                    gsap.to("#node-2024", { opacity: 1, x: 10, duration: 0.5, delay: 0.5 });
-                    gsap.to("#bio-img-reset", { opacity: 0, duration: 0.5 });
-                    gsap.to("#bio-img-reality", { opacity: 1, duration: 0.5, delay: 0.5 });
-                    unlock(1000); break;
+                    // Arsenal Phase - Cracked Icons pop up
+                    const arsenalIcons = document.querySelectorAll('.arsenal-icon');
+                    gsap.to(arsenalIcons, { 
+                        opacity: 1, scale: 1, duration: 0.5, stagger: 0.15, 
+                        ease: "back.out(1.7)", onComplete: () => unlock(1000)
+                    });
+                    break;
+
                 case 4:
-                    gsap.to([".timeline-node", "#timeline-rail"], {
-                        opacity: 0, filter: "blur(10px)", duration: 0.5
+                    // Transition to Bio 2022 - Desktop slides up, Bio reveals
+                    const transitionTl = gsap.timeline({
+                        onComplete: () => {
+                            gsap.to("#node-2022", { visibility: "visible", opacity: 1, x: 10, duration: 0.5 });
+                            gsap.to("#bio-img-agency", { visibility: "visible", opacity: 1, duration: 1 });
+                            unlock(1000);
+                        }
                     });
-                    gsap.to("#bio-img-reality", {
-                        opacity: 0, duration: 0.5
+                    transitionTl.to(["#photoshop-desktop", "#crash-sequence"], { 
+                        y: "-100vh", opacity: 0, duration: 0.8, ease: "power2.inOut" 
                     });
-                    gsap.to(["#sec-intro > div.w-2\\/5", "#sec-intro > div.w-3\\/5"], {
-                        borderColor: "transparent", backgroundColor: "#000000", duration: 0.5
-                    });
+                    transitionTl.set(["#bio-left-col", "#bio-right-col"], { visibility: "visible", opacity: 1 }, "-=0.4");
+                    break;
+
+                case 5:
+                    // Bio 2023
+                    gsap.to("#node-2023", { opacity: 1, x: 10, duration: 0.5 });
+                    gsap.to("#bio-img-agency", { opacity: 0, duration: 0.5 });
+                    gsap.to("#bio-img-reset", { opacity: 1, duration: 0.5, delay: 0.2 });
+                    unlock(1000); break;
+
+                case 6:
+                    // Bio 2024
+                    gsap.to("#node-2024", { opacity: 1, x: 10, duration: 0.5 });
+                    gsap.to("#bio-img-reset", { opacity: 0, duration: 0.5 });
+                    gsap.to("#bio-img-reality", { opacity: 1, duration: 0.5, delay: 0.2 });
+                    unlock(1000); break;
+
+                case 7:
+                    // Pragmatismus Zoom
+                    gsap.to([".timeline-node", "#timeline-rail"], { opacity: 0, filter: "blur(10px)", duration: 0.5 });
+                    gsap.to("#bio-img-reality", { opacity: 0, duration: 0.5 });
+                    gsap.to(["#bio-left-col", "#bio-right-col"], { borderColor: "transparent", backgroundColor: "#000000", duration: 0.5 });
                     gsap.set("#intro-pragmatism", { scale: 4, opacity: 0 });
                     gsap.to("#intro-pragmatism", { opacity: 1, scale: 1, duration: 0.8, ease: "power2.out" });
                     unlock(800); break;
-                case 5:
-                    // Spatial UI Popups (Evidence)
+
+                case 8:
+                    // Evidence Popups
                     gsap.to(".project-popup", {
-                        opacity: 1,
-                        x: "+=0", y: "+=0", 
-                        rotationX: () => (Math.random() - 0.5) * 25,
-                        rotationY: () => (Math.random() - 0.5) * 25,
-                        duration: 1.2,
-                        stagger: 0.15,
-                        ease: "back.out(2)"
+                        opacity: 1, rotationX: () => (Math.random() - 0.5) * 25, rotationY: () => (Math.random() - 0.5) * 25,
+                        duration: 1.2, stagger: 0.15, ease: "back.out(2)"
                     });
                     unlock(1200); break;
-                case 6:
-                    // Transition Section 1 elements out
-                    gsap.to("#pragmatism-wrapper", {
-                        opacity: 0,
-                        filter: "blur(10px)",
-                        duration: 1.2,
-                        ease: "power2.in"
-                    });
-                    
+
+                case 9:
+                    // Section 1 -> 2 Transition
+                    gsap.to("#pragmatism-wrapper", { opacity: 0, filter: "blur(10px)", duration: 1.2, ease: "power2.in" });
                     gsap.to(window, {
-                        scrollTo: "#sec-pro",
-                        duration: 1.5,
-                        delay: 0.2,
-                        ease: "power2.inOut",
+                        scrollTo: "#sec-pro", duration: 1.5, delay: 0.2, ease: "power2.inOut",
                         onComplete: () => {
                             document.getElementById("status-text").innerText = "STATUS: SYSTEM_MADNESS";
                             document.getElementById("status-dot").classList.replace("bg-neon", "bg-alert");
@@ -117,15 +155,15 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                     });
                     break;
-                // Section 2: Pro Madness
-                case 7: currentStep = 1; startDrawing(); unlock(1000); break;
-                case 8: currentStep = 2; startCrosshair(); unlock(1500); break;
-                case 9: currentStep = 3; startBanner(); unlock(1000); break;
-                case 10: currentStep = 4; startReveal(); unlock(1500); break;
-                case 11: currentStep = 5; startKPIs(); unlock(500); break;
-                case 12: currentStep = 6; startClimax(); unlock(1000); break;
-                // Section 3: Modular Sequence
-                case 13:
+
+                case 10: currentStep = 1; startDrawing(); unlock(1000); break;
+                case 11: currentStep = 2; startCrosshair(); unlock(1500); break;
+                case 12: currentStep = 3; showBaustelle(); unlock(1000); break;
+                case 13: currentStep = 4; startReveal(); unlock(1500); break;
+                case 14: currentStep = 5; startKPIs(); unlock(500); break;
+                case 15: currentStep = 6; startClimax(); unlock(1000); break;
+                
+                case 16:
                     gsap.to(window, { scrollTo: "#sec-modular", duration: 1.5, ease: "power2.inOut", onComplete: () => {
                         document.getElementById("status-text").innerText = "STATUS: MODULAR_SYSTEM";
                         document.getElementById("status-dot").classList.replace("bg-alert", "bg-neon");
@@ -133,31 +171,18 @@ document.addEventListener("DOMContentLoaded", () => {
                         isAnimating = false;
                     }});
                     break;
-                case 14: showBaukasten(); unlock(1000); break;
-                case 15: startMerge(); unlock(1000); break;
-                case 16: showReduction(); unlock(500); break;
-                case 17: showProof(); unlock(2000); break;
-                case 18:
-                    triggerShatterTransition();
-                    unlock(2000); 
-                    break;
-                case 19:
+                case 17: showBaukasten(); unlock(1000); break;
+                case 18: startMerge(); unlock(1000); break;
+                case 19: showReduction(); unlock(500); break;
+                case 20: showProof(); unlock(2000); break;
+                case 21: triggerShatterTransition(); unlock(2000); break;
+                case 22:
                     const uiContainer = document.getElementById('ui-container');
                     const threeCanvas = document.getElementById('three-canvas');
-                    if (uiContainer) {
-                        uiContainer.style.visibility = 'visible';
-                        uiContainer.style.opacity = '1';
-                    }
-                    if (threeCanvas) {
-                        threeCanvas.style.visibility = 'visible';
-                        threeCanvas.style.opacity = '1';
-                    }
-                    const oldElements = document.querySelectorAll('main, #grid-background, #interface-container');
-                    oldElements.forEach(el => {
-                        if(el) el.style.display = 'none';
-                    });
-                    unlock(500); 
-                    break;
+                    if (uiContainer) { uiContainer.style.visibility = 'visible'; uiContainer.style.opacity = '1'; }
+                    if (threeCanvas) { threeCanvas.style.visibility = 'visible'; threeCanvas.style.opacity = '1'; }
+                    document.querySelectorAll('main, #grid-background, #interface-container').forEach(el => { if(el) el.style.display = 'none'; });
+                    unlock(500); break;
             }
         }
     };
@@ -175,10 +200,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function updateTimelineState(activeTick) {
         let activeChap = "";
-        if (activeTick < 6) activeChap = "chap-pre-study";
-        else if (activeTick < 19) activeChap = "chap-sem-01";
-        else if (activeTick < 27) activeChap = "chap-sem-02";
-        else if (activeTick < 40) activeChap = "chap-sem-03";
+        // Mapping aligned with user's architectural requirements:
+        // INIT (1-16) includes Desktop, Arsenal and System Madness (Sektion 2)
+        if (activeTick <= 16) activeChap = "chap-pre-study";
+        // MOD_01 (17-21) is the Service Design / Modular section
+        else if (activeTick <= 21) activeChap = "chap-sem-01";
+        // MOD_02 (22-31) Transition to Phase 2 / Chaos
+        else if (activeTick <= 31) activeChap = "chap-sem-02";
+        // ERR_03 (32-46) Analog Infection / Clash
+        else if (activeTick <= 46) activeChap = "chap-sem-03";
+        // OUT_04 (47+) Final Balance
         else activeChap = "chap-outro";
 
         if (activePulseTween1) {
@@ -239,13 +270,25 @@ document.addEventListener("DOMContentLoaded", () => {
         updateTimelineState(targetTick);
 
         if (targetTick === 1) {
+            // Fix: Fade out intro-title during HUD zoom for a clean black background
             gsap.to("#intro-title", { opacity: 0, duration: 1.2, pointerEvents: "none", ease: "expo.out" });
+            
+            // Fix: Immediately hide bio content to prevent background leak in blur
+            gsap.set(["#node-2022", "#bio-img-agency", "#bio-left-col", "#bio-right-col"], { 
+                opacity: 0, 
+                visibility: "hidden" 
+            });
+            // Keep Photoshop components hidden during zoom (User wants black Background)
+            gsap.set(["#crash-sequence", "#photoshop-desktop"], { opacity: 0 });
+            
+            // Ensure HUD is visible!
+            gsap.set(["#master-timeline", "#timeline-gradient"], { opacity: 1, visibility: "visible" });
         }
         
-        if (targetTick === 6) {
+        if (targetTick === 9) {
             // Synchronize with Section 1 -> 2 transition
-            window.presentation.currentTick = 6;
-            window.presentation.executeTick(6);
+            window.presentation.currentTick = 9;
+            window.presentation.executeTick(9);
         }
 
         const tlEl = document.getElementById('master-timeline');
@@ -334,17 +377,20 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function proceedWithTick() {
-        if (window.presentation.currentTick < 19) {
+        if (window.presentation.currentTick < 22) {
             window.presentation.nextTick();
         } else if (presentationPhase2) {
             presentationPhase2.nextTick();
         }
 
+        // SYNC: Call timeline update immediately after starting the logic/animation
+        syncTimelineHighlight();
+    }
+
+    function syncTimelineHighlight() {
         let activeGlobalTick = window.presentation.currentTick;
-        if (activeGlobalTick >= 19 && presentationPhase2) {
-            if (presentationPhase2.currentTick >= 19) {
-                activeGlobalTick = presentationPhase2.currentTick;
-            }
+        if (activeGlobalTick >= 22 && presentationPhase2) {
+            activeGlobalTick = presentationPhase2.currentTick;
         }
         updateTimelineState(activeGlobalTick);
     }
@@ -359,7 +405,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         let globalNextTick;
-        if (window.presentation.currentTick < 19) {
+        if (window.presentation.currentTick < 22) {
             globalNextTick = window.presentation.currentTick + 1;
         } else if (presentationPhase2) {
             globalNextTick = presentationPhase2.currentTick + 1;
@@ -367,7 +413,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        if ([1, 6, 19, 29, 44].includes(globalNextTick) && lastZoomedTick !== globalNextTick) {
+        if ([1, 9, 22, 32, 47].includes(globalNextTick) && lastZoomedTick !== globalNextTick) {
             lastZoomedTick = globalNextTick;
             zoomInMasterTimeline(globalNextTick);
         } else {
@@ -672,94 +718,98 @@ document.addEventListener("DOMContentLoaded", () => {
         const svgBounds = document.getElementById('svg-container').getBoundingClientRect();
         crosshair.style.opacity = '1';
         let iterations = 0;
-        window.searchInterval = setInterval(() => {
-            const randX = svgBounds.left + Math.random() * (svgBounds.width - 200);
-            const randY = svgBounds.top + Math.random() * (svgBounds.height - 200);
-            crosshair.style.transition = 'none';
-            crosshair.style.left = randX + 'px';
-            crosshair.style.top = randY + 'px';
-            crosshair.style.width = (50 + Math.random() * 150) + 'px';
-            crosshair.style.height = (50 + Math.random() * 150) + 'px';
-            iterations++;
-            if (currentStep !== 2) { clearInterval(window.searchInterval); return; }
-            if (iterations > 8) { clearInterval(window.searchInterval); executeFinalSnap(); }
-        }, 60);
-
-        function executeFinalSnap() {
-            if (currentStep !== 2) return;
-            const container = document.getElementById('svg-container');
-            const targetRect = targetElementForLock.getBoundingClientRect();
-            const targetCenterX = targetRect.left + targetRect.width / 2;
-            const targetCenterY = targetRect.top + targetRect.height / 2;
-            const containerRect = container.getBoundingClientRect();
-            const originX = ((targetCenterX - containerRect.left) / containerRect.width) * 100;
-            const originY = ((targetCenterY - containerRect.top) / containerRect.height) * 100;
-            const scale = 2.5; 
-            crosshair.style.transition = 'all 0.4s cubic-bezier(0.1, 0.9, 0.2, 1)';
-            container.style.transition = 'transform 1.2s cubic-bezier(0.1, 0.9, 0.2, 1), transform-origin 0s';
-            const padding = 20;
-            const size = Math.max(targetRect.width, targetRect.height) + padding * 2;
-            const finalW = size * scale;
-            const finalH = size * scale;
-            const finalL = targetCenterX - finalW / 2;
-            const finalT = targetCenterY - finalH / 2;
-            crosshair.style.left = finalL + 'px';
-            crosshair.style.top = finalT + 'px';
-            crosshair.style.width = finalW + 'px';
-            crosshair.style.height = finalH + 'px';
-            window.finalLockStats = { left: finalL, top: finalT, width: finalW, height: finalH };
-            container.style.transformOrigin = `${originX}% ${originY}%`;
-            container.style.transform = `scale(${scale})`;
             setTimeout(() => {
                 if (currentStep !== 2) return;
-                const terminalOverlay = document.getElementById('terminal-overlay');
-                const terminalText = document.getElementById('terminal-text');
-                terminalOverlay.style.opacity = '1';
-                const textToType = "> TARGET_LOCK: LAT/LON [BAUSTELLE]";
-                terminalText.textContent = '';
-                let charIndex = 0;
-                window.typingInterval = setInterval(() => {
-                    terminalText.textContent += textToType[charIndex];
-                    charIndex++;
-                    if (charIndex >= textToType.length) clearInterval(window.typingInterval);
-                }, 30);
+                const target = document.getElementById('baustelle-container');
+                const targetRect = target.getBoundingClientRect();
+                const container = document.getElementById('svg-container');
+                const svgRect = container.getBoundingClientRect();
+                
+                // Random jumping before final snap
+                crosshair.style.opacity = '1';
+                let jumpCount = 0;
+                window.jumpInterval = setInterval(() => {
+                    const rx = svgRect.left + Math.random() * (svgRect.width - 200);
+                    const ry = svgRect.top + Math.random() * (svgRect.height - 200);
+                    crosshair.style.transition = 'none';
+                    crosshair.style.left = rx + 'px';
+                    crosshair.style.top = ry + 'px';
+                    crosshair.style.width = (100 + Math.random() * 200) + 'px';
+                    crosshair.style.height = (80 + Math.random() * 150) + 'px';
+                    jumpCount++;
+                    if (jumpCount > 8 || currentStep !== 2) {
+                        clearInterval(window.jumpInterval);
+                        if (currentStep === 2) finalize();
+                    }
+                }, 60);
+
+                function finalize() {
+                    const scale = 1.0; 
+                    const padding = 8; // Small consistent padding around the asset
+                    const finalW = (targetRect.width + padding * 2) * scale;
+                    const finalH = (targetRect.height + padding * 2) * scale;
+                    const finalL = (targetRect.left + targetRect.width / 2) - finalW / 2;
+                    const finalT = (targetRect.top + targetRect.height / 2) - finalH / 2;
+
+                    crosshair.style.transition = 'all 0.5s cubic-bezier(0.1, 0.9, 0.2, 1)';
+                    crosshair.style.left = finalL + 'px';
+                    crosshair.style.top = finalT + 'px';
+                    crosshair.style.width = finalW + 'px';
+                    crosshair.style.height = finalH + 'px';
+                    window.finalLockStats = { left: finalL, top: finalT, width: finalW, height: finalH };
+
+                    // Zoom the whole SVG section to the container
+                    const originX = ((targetRect.left + targetRect.width/2 - svgRect.left) / svgRect.width) * 100;
+                    const originY = ((targetRect.top + targetRect.height/2 - svgRect.top) / svgRect.height) * 100;
+                    container.style.transition = 'transform 1.2s cubic-bezier(0.1, 0.9, 0.2, 1), transform-origin 0s';
+                    container.style.transformOrigin = `${originX}% ${originY}%`;
+                    container.style.transform = `scale(1.8)`;
+
+                    const terminalOverlay = document.getElementById('terminal-overlay');
+                    const terminalText = document.getElementById('terminal-text');
+                    terminalOverlay.style.opacity = '1';
+                    const textToType = "> TARGET_LOCK: AREA_BAUSTELLE.LOG";
+                    terminalText.textContent = '';
+                    let charIndex = 0;
+                    window.typingInterval = setInterval(() => {
+                        terminalText.textContent += textToType[charIndex];
+                        charIndex++;
+                        if (charIndex >= textToType.length) clearInterval(window.typingInterval);
+                    }, 30);
+                }
             }, 400);
-        }
     }
 
-    function startBanner() {
+    function showBaustelle() {
         if (!window.finalLockStats) return;
-        const banner = document.getElementById('banner-overlay');
-        banner.style.left = window.finalLockStats.left + 'px';
-        banner.style.top = window.finalLockStats.top + 'px';
-        banner.style.width = window.finalLockStats.width + 'px';
-        banner.style.height = '0px';
-        banner.style.opacity = '1';
-        banner.offsetHeight;
-        banner.style.transition = 'height 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s';
-        banner.style.height = window.finalLockStats.height + 'px';
+        const baustelle = document.getElementById('baustelle-container');
+        const padding = 8;
+        
+        // Match the image exactly to the interior of the (padded) crosshair
+        baustelle.style.left = (window.finalLockStats.left + padding) + 'px';
+        baustelle.style.top = (window.finalLockStats.top + padding) + 'px';
+        baustelle.style.width = (window.finalLockStats.width - padding * 2) + 'px';
+        baustelle.style.height = (window.finalLockStats.height - padding * 2) + 'px';
+        
+        // Remove the CSS centering since we are now absolute positioned by JS
+        baustelle.style.transform = 'none';
+
+        baustelle.style.opacity = '1';
+        baustelle.style.filter = 'blur(0px)';
     }
 
     function startReveal() {
-        if (!window.finalLockStats) return;
-        const qr = document.getElementById('qr-container');
+        const baustelle = document.getElementById('baustelle-container');
         const uiInterface = document.getElementById('interface-container');
         const video = document.getElementById('onboarding-video');
-        qr.style.left = window.finalLockStats.left + 'px';
-        qr.style.top = window.finalLockStats.top + 'px';
-        qr.style.width = window.finalLockStats.width + 'px';
-        qr.style.height = window.finalLockStats.height + 'px';
-        qr.style.opacity = '1';
-        qr.classList.remove('melt');
+        
+        baustelle.classList.add('melt');
+        document.getElementById('main-content').classList.add('blur-out');
+        
         setTimeout(() => {
             if (currentStep !== 4) return;
-            qr.classList.add('melt');
-            document.getElementById('main-content').classList.add('blur-out');
-            setTimeout(() => {
-                if (currentStep !== 4) return;
-                uiInterface.classList.add('visible');
-                video.play();
-            }, 1000);
+            uiInterface.classList.add('visible');
+            video.play();
         }, 1000);
     }
 
@@ -792,13 +842,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const terminalOverlay = document.getElementById('terminal-overlay');
         const terminalText = document.getElementById('terminal-text');
         const container = document.getElementById('svg-container');
+        if (window.jumpInterval) clearInterval(window.jumpInterval);
         if (window.searchInterval) clearInterval(window.searchInterval);
         if (window.typingInterval) clearInterval(window.typingInterval);
         crosshair.style.opacity = '0';
         terminalOverlay.style.opacity = '0';
         terminalText.textContent = '';
         container.style.transform = 'scale(1) translate(0px, 0px)';
-        resetBanner();
         resetReveal();
     }
 
@@ -809,16 +859,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function resetReveal() {
-        const qr = document.getElementById('qr-container');
+        const baustelle = document.getElementById('baustelle-container');
         const uiInterface = document.getElementById('interface-container');
-        const container = document.getElementById('svg-container');
-        if (qr) {
-            qr.style.opacity = '0';
-            qr.classList.remove('melt');
+        const mainContent = document.getElementById('main-content');
+        
+        if (baustelle) {
+            baustelle.style.opacity = '0';
+            baustelle.classList.remove('melt');
         }
         if (uiInterface) uiInterface.classList.remove('visible');
-        const mainContent = document.getElementById('main-content');
         if (mainContent) mainContent.classList.remove('blur-out');
+        
         resetKPIs();
     }
 
@@ -1163,7 +1214,7 @@ class DataCanvas {
 
 class Presentation {
     constructor() {
-        this.currentTick = 18; // Offset for Projekt B
+        this.currentTick = 22; // Offset for Projekt B following Phase 1 completion at Tick 22
         this.isTransitioning = false;
 
         // DOM Elements
@@ -1230,34 +1281,34 @@ class Presentation {
     async nextTick() {
         this.currentTick++;
         switch (this.currentTick) {
-            case 19: await this.transitionToTick1(); break;
-            case 20: if (this.overlayLeft) this.overlayLeft.classList.add('active'); break;
-            case 21: if (this.overlayRight) this.overlayRight.classList.add('active'); break;
-            case 22: this.startChaos(); break;
-            case 23: this.applyFilter(); break;
-            case 24: this.doMatchcut(); break;
-            case 25: this.centerPoster(); break;
-            case 26: await this.showConclusion(); break;
-            case 27: this.showDeadpanZero(); break;
-            case 28: this.showAnalogInfection(); break;
-            case 29: this.startChairStorm(); break;
-            case 30: this.showFatalErrors(); break;
-            case 31: this.showFakeLuftschloss(); break;
-            case 32: this.showRealityCheck(); break;
-            case 33: this.showTrueValue(); break;
-            case 34: this.showTunnelVision(); break;
-            case 35: this.showDimOut(); break;
-            // Ticks 36-39 are buffer/dead space as requested
-            case 40: this.showMountSequence(); break;
-            case 41: this.showFile1(); break;
-            case 42: this.showFile2(); break;
-            case 43: this.showFileError(); break;
-            case 44: this.showFinalVerification(); break;
-            case 45: await this.showSystemPurge(); break;
-            case 47: this.showFoundationLine(); break;
-            case 48: /* Dummy Tick - Strategic Pause */ break;
-            case 49: this.showMicDrop(); break;
-            case 50: this.showSystemFreeze(); break;
+            case 23: await this.transitionToTick1(); break;
+            case 24: if (this.overlayLeft) this.overlayLeft.classList.add('active'); break;
+            case 25: if (this.overlayRight) this.overlayRight.classList.add('active'); break;
+            case 26: this.startChaos(); break;
+            case 27: this.applyFilter(); break;
+            case 28: this.doMatchcut(); break;
+            case 29: this.centerPoster(); break;
+            case 30: await this.showConclusion(); break;
+            case 31: this.showDeadpanZero(); break;
+            case 32: this.showAnalogInfection(); break;
+            case 33: this.startChairStorm(); break;
+            case 34: this.showFatalErrors(); break;
+            case 35: this.showFakeLuftschloss(); break;
+            case 36: this.showRealityCheck(); break;
+            case 37: this.showTrueValue(); break;
+            case 38: this.showTunnelVision(); break;
+            case 39: this.showDimOut(); break;
+            // Ticks 40-43 are buffer/dead space
+            case 44: this.showMountSequence(); break;
+            case 45: this.showFile1(); break;
+            case 46: this.showFile2(); break;
+            case 47: this.showFileError(); break;
+            case 48: this.showFinalVerification(); break;
+            case 49: await this.showSystemPurge(); break;
+            case 50: this.showFoundationLine(); break;
+            case 51: /* Dummy Tick - Strategic Pause */ break;
+            case 52: this.showMicDrop(); break;
+            case 53: this.showSystemFreeze(); break;
         }
     }
 

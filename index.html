@@ -124,11 +124,129 @@
                 class="absolute inset-0 flex flex-col items-center justify-center z-40 bg-black transition-opacity duration-500">
                 <h1 class="font-sans text-9xl font-black mb-6 leading-none tracking-tighter mix-blend-difference">
                     LUCA<br>ZELL</h1>
-                <div class="font-mono text-neon text-xs">> LOADING PROFILE...</div>
+                <div class="font-mono text-neon text-xs" id="loading-text">> LOADING PROFILE...</div>
+            </div>
+
+            <!-- Photoshop Easter Egg (Tick 1 Start) -->
+            <div id="crash-sequence"
+                class="absolute inset-0 z-[100] flex items-center justify-center pointer-events-none opacity-0 bg-black">
+
+                <div class="relative w-full h-full flex items-center justify-center">
+                    <!-- Desktop Phase: Icon & Cursor -->
+                    <div id="photoshop-desktop" class="absolute inset-0 flex items-center justify-center opacity-0">
+                        <!-- Central Photoshop Icon -->
+                        <div id="photoshop-icon-container"
+                            class="flex flex-col items-center gap-2 group cursor-none z-[105]">
+                            <div id="photoshop-icon" class="w-16 h-16 transition-transform duration-100">
+                                <img src="assets/sem1/photoshop_exe_icon.png"
+                                    class="w-full h-full object-contain shadow-lg">
+                            </div>
+                            <span
+                                class="font-mono text-[10px] text-white/80 bg-black/40 px-2 py-0.5 rounded">PS_CS6_cracked.exe</span>
+                        </div>
+
+                        <!-- Arsenal Icons (Hidden by default) -->
+                        <div id="arsenal-icons" class="absolute inset-0 pointer-events-none">
+                            <!-- Illustrator -->
+                            <div
+                                class="arsenal-icon absolute top-[30%] left-[35%] flex flex-col items-center gap-1 opacity-0 scale-0">
+                                <img src="assets/sem1/illustrator_exe_icon.png"
+                                    class="w-12 h-12 object-contain shadow-md">
+                                <span
+                                    class="font-mono text-[8px] text-white/60 bg-black/40 px-1 py-0.5 rounded">Illustrator_crack.exe</span>
+                            </div>
+                            <!-- InDesign -->
+                            <div
+                                class="arsenal-icon absolute top-[60%] left-[30%] flex flex-col items-center gap-1 opacity-0 scale-0">
+                                <img src="assets/sem1/indesign_exe_icon.png" class="w-12 h-12 object-contain shadow-md">
+                                <span
+                                    class="font-mono text-[8px] text-white/60 bg-black/40 px-1 py-0.5 rounded">InDesign_keygen.zip</span>
+                            </div>
+                            <!-- Premiere -->
+                            <div
+                                class="arsenal-icon absolute top-[25%] left-[55%] flex flex-col items-center gap-1 opacity-0 scale-0">
+                                <img src="assets/sem1/premiere_exe_icon.png" class="w-12 h-12 object-contain shadow-md">
+                                <span
+                                    class="font-mono text-[8px] text-white/60 bg-black/40 px-1 py-0.5 rounded">Premiere_patch.exe</span>
+                            </div>
+                            <!-- After Effects -->
+                            <div
+                                class="arsenal-icon absolute top-[55%] left-[60%] flex flex-col items-center gap-1 opacity-0 scale-0">
+                                <img src="assets/sem1/aftereffects_exe_icon.png"
+                                    class="w-12 h-12 object-contain shadow-md">
+                                <span
+                                    class="font-mono text-[8px] text-white/60 bg-black/40 px-1 py-0.5 rounded">AfterEffects_torrent.dmg</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Simulated Mouse Cursor -->
+                    <div id="mouse-cursor"
+                        class="absolute top-1/2 left-1/2 w-5 h-5 opacity-0 z-[110] pointer-events-none transform -translate-x-1/2 -translate-y-1/2">
+                        <svg viewBox="0 0 24 24" fill="white" stroke="black" stroke-width="1.5">
+                            <path d="M5.5 3.5L19.5 12L12 13.5L15.5 20.5L12.5 21.5L9 14.5L5.5 17.5V3.5Z" />
+                        </svg>
+                    </div>
+
+                    <!-- Fake Photoshop Window -->
+                    <div id="photoshop-window"
+                        class="absolute left-[10%] bg-[#222] border border-white/20 shadow-[0_40px_80px_rgba(0,0,0,0.9)] rounded-lg overflow-hidden flex items-center justify-center transform scale-0 opacity-0">
+                        <img src="assets/sem1/photoshop_exe.png" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none">
+                        </div>
+                    </div>
+
+                    <!-- Fake Adobe Modal (Slams on top) -->
+                    <div id="adobe-popup"
+                        class="absolute left-[10%] w-[480px] bg-white text-black shadow-[0_50px_100px_rgba(0,0,0,1)] rounded-lg overflow-hidden border border-white/20 select-none transform scale-0 opacity-0">
+                        <!-- Red Header -->
+                        <div id="adobe-header"
+                            class="bg-[#C40000] text-white py-3 px-4 text-center font-bold text-sm tracking-tight">
+                            THIS APP HAS BEEN DISABLED
+                        </div>
+
+                        <div class="p-8 flex flex-col items-center">
+                            <!-- Warning Icon -->
+                            <div id="adobe-icon" class="mb-6">
+                                <svg width="60" height="52" viewBox="0 0 60 52" fill="none">
+                                    <path d="M30 0L60 52H0L30 0Z" fill="#C40000" />
+                                    <text x="30" y="42" fill="white" font-family="Arial" font-weight="900"
+                                        font-size="34" text-anchor="middle">!</text>
+                                </svg>
+                            </div>
+
+                            <!-- Title -->
+                            <h2 id="adobe-title" class="text-xl font-bold text-center mb-3 leading-tight px-4">
+                                This unlicensed Adobe app has been disabled
+                            </h2>
+
+                            <!-- Copy -->
+                            <p id="adobe-copy" class="text-xs text-center text-gray-600 px-6 leading-relaxed mb-8">
+                                Switch to genuine Adobe apps — <span class="font-bold">at up to 57% off</span> — to get
+                                the latest features and functionality, including security updates.
+                            </p>
+
+                            <!-- Buttons -->
+                            <div id="adobe-buttons" class="flex gap-3 mb-6">
+                                <button id="btn-shop"
+                                    class="bg-[#1473E6] text-white px-6 py-2 rounded-full text-xs font-bold shadow-lg cursor-pointer">Shop
+                                    offers</button>
+                                <button id="btn-learn"
+                                    class="border-[1.5px] border-black text-black px-6 py-2 rounded-full text-xs font-bold">Learn
+                                    more</button>
+                            </div>
+
+                            <!-- Footer Link -->
+                            <div id="adobe-footer" class="text-[#1473E6] text-xs font-medium">
+                                More info
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Left: Timeline (40%) -->
-            <div
+            <div id="bio-left-col"
                 class="w-2/5 h-full relative z-20 flex flex-col justify-center pl-20 border-r border-white/10 bg-black">
                 <div id="timeline-rail" class="relative h-[60vh] ml-4">
                     <!-- Progress Line Removed -->
@@ -166,9 +284,9 @@
             </div>
 
             <!-- Right: Images (60%) -->
-            <div class="w-3/5 h-full relative z-10 bg-[#1F1F1F]">
+            <div id="bio-right-col" class="w-3/5 h-full relative z-10 bg-black">
                 <!-- Image 1: Agency -->
-                <div id="bio-img-agency" class="absolute inset-0 bg-cover bg-center grayscale opacity-10"
+                <div id="bio-img-agency" class="absolute inset-0 bg-cover bg-center grayscale opacity-0"
                     style="background-image: url('assets/glockundzell.png');">
                 </div>
                 <!-- Image 2: Reset -->
@@ -188,49 +306,77 @@
             <div id="intro-pragmatism"
                 class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 scale-50 z-50 mix-blend-difference pr-[var(--safe-zone)] box-border">
                 <div id="pragmatism-wrapper" class="relative flex items-center justify-center w-full h-full">
-                    
+
                     <!-- Text Layer (z-10 to stay above popups mostly) -->
-                    <h2 class="font-sans text-[9vw] font-black text-white flex justify-center gap-[-0.03em] leading-none z-10 relative">
+                    <h2
+                        class="font-sans text-[9vw] font-black text-white flex justify-center gap-[-0.03em] leading-none z-10 relative">
                         <span class="char">P</span><span class="char">R</span><span class="char">A</span><span
-                            class="char -ml-[0.06em]">G</span><span class="char">M</span><span class="char">A</span><span
-                            class="char -ml-[0.11em]">T</span><span class="char">I</span><span class="char">S</span><span
-                            class="char">M</span><span class="char">U</span><span class="char">S</span>
+                            class="char -ml-[0.06em]">G</span><span class="char">M</span><span
+                            class="char">A</span><span class="char -ml-[0.11em]">T</span><span
+                            class="char">I</span><span class="char">S</span><span class="char">M</span><span
+                            class="char">U</span><span class="char">S</span>
                     </h2>
-                    
+
                     <!-- Evidence Pop-ups -->
-                    <div id="project-popups" class="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+                    <div id="project-popups"
+                        class="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
                         <!-- Popup 1 (Left) -->
-                        <div class="project-popup absolute w-64 h-48 border border-white/20 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-2xl flex items-center justify-center opacity-0 -translate-x-80 -translate-y-20 rotate-[-8deg] overflow-hidden bg-black/80">
-                            <img src="assets/sem1/book1.gif" class="absolute inset-0 w-full h-full object-cover opacity-80 mix-blend-screen">
-                            <div class="absolute inset-0 shadow-[inset_0_0_20px_rgba(255,255,255,0.1)] rounded-2xl pointer-events-none"></div>
-                            <span class="font-mono text-[10px] text-white bg-black/60 backdrop-blur-md px-2 py-1 rounded border border-white/10 absolute bottom-3 right-3 z-10">SYS.EVIDENCE.01</span>
+                        <div
+                            class="project-popup absolute w-64 h-48 border border-white/20 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-2xl flex items-center justify-center opacity-0 -translate-x-80 -translate-y-20 rotate-[-8deg] overflow-hidden bg-black/80">
+                            <img src="assets/sem1/book1.gif"
+                                class="absolute inset-0 w-full h-full object-cover opacity-80 mix-blend-screen">
+                            <div
+                                class="absolute inset-0 shadow-[inset_0_0_20px_rgba(255,255,255,0.1)] rounded-2xl pointer-events-none">
+                            </div>
+                            <span
+                                class="font-mono text-[10px] text-white bg-black/60 backdrop-blur-md px-2 py-1 rounded border border-white/10 absolute bottom-3 right-3 z-10">SYS.EVIDENCE.01</span>
                         </div>
                         <!-- Popup 2 (Right) -->
-                        <div class="project-popup absolute w-48 h-64 border border-white/20 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-2xl flex items-center justify-center opacity-0 translate-x-80 -translate-y-10 rotate-[5deg] overflow-hidden bg-black/80">
-                            <img src="assets/sem1/book2.gif" class="absolute inset-0 w-full h-full object-cover opacity-80 mix-blend-screen">
-                            <div class="absolute inset-0 shadow-[inset_0_0_20px_rgba(255,255,255,0.1)] rounded-2xl pointer-events-none"></div>
-                            <span class="font-mono text-[10px] text-white bg-black/60 backdrop-blur-md px-2 py-1 rounded border border-white/10 absolute bottom-3 right-3 z-10">SYS.EVIDENCE.02</span>
+                        <div
+                            class="project-popup absolute w-48 h-64 border border-white/20 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-2xl flex items-center justify-center opacity-0 translate-x-80 -translate-y-10 rotate-[5deg] overflow-hidden bg-black/80">
+                            <img src="assets/sem1/book2.gif"
+                                class="absolute inset-0 w-full h-full object-cover opacity-80 mix-blend-screen">
+                            <div
+                                class="absolute inset-0 shadow-[inset_0_0_20px_rgba(255,255,255,0.1)] rounded-2xl pointer-events-none">
+                            </div>
+                            <span
+                                class="font-mono text-[10px] text-white bg-black/60 backdrop-blur-md px-2 py-1 rounded border border-white/10 absolute bottom-3 right-3 z-10">SYS.EVIDENCE.02</span>
                         </div>
                         <!-- Popup 3 (Bottom Center) -->
-                        <div class="project-popup absolute w-36 h-[312px] border border-white/20 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-2xl flex items-center justify-center opacity-0 -translate-x-44 translate-y-32 rotate-[3deg] overflow-hidden bg-black/80">
-                            <img src="assets/sem1/app1.gif" class="absolute inset-0 w-full h-full object-cover opacity-80 mix-blend-screen">
-                            <div class="absolute inset-0 shadow-[inset_0_0_20px_rgba(255,255,255,0.1)] rounded-2xl pointer-events-none"></div>
-                            <span class="font-mono text-[10px] text-white bg-black/60 backdrop-blur-md px-2 py-1 rounded border border-white/10 absolute bottom-3 right-3 z-10">SYS.APP.03</span>
+                        <div
+                            class="project-popup absolute w-36 h-[312px] border border-white/20 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-2xl flex items-center justify-center opacity-0 -translate-x-44 translate-y-32 rotate-[3deg] overflow-hidden bg-black/80">
+                            <img src="assets/sem1/app1.gif"
+                                class="absolute inset-0 w-full h-full object-cover opacity-80 mix-blend-screen">
+                            <div
+                                class="absolute inset-0 shadow-[inset_0_0_20px_rgba(255,255,255,0.1)] rounded-2xl pointer-events-none">
+                            </div>
+                            <span
+                                class="font-mono text-[10px] text-white bg-black/60 backdrop-blur-md px-2 py-1 rounded border border-white/10 absolute bottom-3 right-3 z-10">SYS.APP.03</span>
                         </div>
                         <!-- Popup 4 (Top) -->
-                        <div class="project-popup absolute w-80 h-[180px] border border-white/20 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-2xl flex items-center justify-center opacity-0 translate-x-32 -translate-y-48 rotate-[-4deg] overflow-hidden bg-black/80">
-                            <img src="assets/sem1/zell_luca_schach_v4.png" class="absolute inset-0 w-full h-full object-cover opacity-80 mix-blend-screen">
-                            <div class="absolute inset-0 shadow-[inset_0_0_20px_rgba(255,255,255,0.1)] rounded-2xl pointer-events-none"></div>
-                            <span class="font-mono text-[10px] text-white bg-black/60 backdrop-blur-md px-2 py-1 rounded border border-white/10 absolute bottom-3 right-3 z-10">SYS.CHESS.04</span>
+                        <div
+                            class="project-popup absolute w-80 h-[180px] border border-white/20 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-2xl flex items-center justify-center opacity-0 translate-x-32 -translate-y-48 rotate-[-4deg] overflow-hidden bg-black/80">
+                            <img src="assets/sem1/zell_luca_schach_v4.png"
+                                class="absolute inset-0 w-full h-full object-cover opacity-80 mix-blend-screen">
+                            <div
+                                class="absolute inset-0 shadow-[inset_0_0_20px_rgba(255,255,255,0.1)] rounded-2xl pointer-events-none">
+                            </div>
+                            <span
+                                class="font-mono text-[10px] text-white bg-black/60 backdrop-blur-md px-2 py-1 rounded border border-white/10 absolute bottom-3 right-3 z-10">SYS.CHESS.04</span>
                         </div>
                         <!-- Popup 5 (Bottom Right) -->
-                        <div class="project-popup absolute w-72 h-[162px] border border-white/20 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-2xl flex items-center justify-center opacity-0 translate-x-80 translate-y-36 rotate-[4deg] overflow-hidden bg-black/80">
-                            <video src="assets/sem1/sound-pad.mp4" autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover opacity-80 mix-blend-screen"></video>
-                            <div class="absolute inset-0 shadow-[inset_0_0_20px_rgba(255,255,255,0.1)] rounded-2xl pointer-events-none"></div>
-                            <span class="font-mono text-[10px] text-white bg-black/60 backdrop-blur-md px-2 py-1 rounded border border-white/10 absolute bottom-3 right-3 z-10">SYS.SOUND.05</span>
+                        <div
+                            class="project-popup absolute w-72 h-[162px] border border-white/20 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-2xl flex items-center justify-center opacity-0 translate-x-80 translate-y-36 rotate-[4deg] overflow-hidden bg-black/80">
+                            <video src="assets/sem1/sound-pad.webm" autoplay loop muted playsinline
+                                class="absolute inset-0 w-full h-full object-cover opacity-80 mix-blend-screen"></video>
+                            <div
+                                class="absolute inset-0 shadow-[inset_0_0_20px_rgba(255,255,255,0.1)] rounded-2xl pointer-events-none">
+                            </div>
+                            <span
+                                class="font-mono text-[10px] text-white bg-black/60 backdrop-blur-md px-2 py-1 rounded border border-white/10 absolute bottom-3 right-3 z-10">SYS.SOUND.05</span>
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
         </section>
@@ -243,8 +389,8 @@
                 <div id="svg-container"></div>
                 <div id="banner-overlay"></div>
 
-                <div id="qr-container">
-                    <img src="assets/section_2/qr_code_new.png" alt="QR Code">
+                <div id="baustelle-container">
+                    <img src="assets/section_2/baustelle_blur.png" alt="Baustelle">
                 </div>
 
                 <div id="crosshair">
@@ -426,7 +572,7 @@
     </main>
 
     <div id="interface-container" class="pr-[var(--safe-zone)] box-border">
-        <video id="onboarding-video" src="assets/section_2/mockup_richardt_mobile.mp4" playsinline muted></video>
+        <video id="onboarding-video" src="assets/section_2/mockup_richardt_mobile.mkv" playsinline muted></video>
         <div id="kpi-overlay">
             <div class="kpi-item" id="kpi-time">TIME: 14_DAYS</div>
             <div class="kpi-item" id="kpi-status">STATUS: +2_AZUBIS</div>
