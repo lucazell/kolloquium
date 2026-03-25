@@ -1448,23 +1448,23 @@ class Presentation {
         if (this.chairInterval) return;
 
         const chairList = [
-            "1 1 of 1.png", "10 1 of 1.png", "2 1 of 1.png", "3 1 of 1.png", "4 1 of 1.png", "5 1 of 1.png", "7 1 of 1.png",
-            "bad__mid_oben31.png", "bad_bad_hinten_links2.png", "bad_bad_vorn_links30.png", "bad_bad_vorne10.png",
-            "bad_bad_vorne20.png", "bad_bad_vorne21.png", "bad_bad_vorne_links11.png", "bad_bad_vorne_links2.png",
-            "bad_bad_vorne_rechts22.png", "bad_good_draufsicht3.png", "bad_good_seitlich4.png", "bad_good_vorn_rechts31.png",
-            "bad_good_vorne_links22.png", "bad_mid_oben30.png", "bad_mid_seitlich6.png", "bad_mid_vorne_links20.png",
-            "bad_mid_vorne_links6.png", "good_hinten_rechts21.png", "good_oben_6.png", "good_oben_rechts20.png",
-            "good_seitlich20.png", "good_seitlich30.png", "good_unten20.png", "good_unten31.png", "good_unten6.png",
-            "good_vorn.png", "good_vorn30.png", "good_vorn_rechts32.png", "good_vorne6.png", "good_vorne7.png",
-            "good_vorne8.png", "good_vorne_links12.png", "good_vorne_links21.png", "good_vorne_links3.png",
-            "good_vorne_links7.png", "good_vorne_links_hq.png", "good_vorne_rechts20.png", "good_vorne_rechts21.png",
-            "mid_bad_draufsicht.png", "mid_good_ hinten_rechts30.png", "mid_good_draufsicht2.png", "mid_good_hinten_links.png",
-            "mid_good_hinten_links6.png", "mid_hinten_rechts20.png", "mid_mid_hinten_links20.png", "mid_oben20.png",
-            "mid_oben_7.png", "mid_seitlich.png", "mid_seitlich2.png", "mid_seitlich21.png", "mid_seitlich3.png",
-            "mid_seitlich7.png", "mid_unten.png", "mid_unten30.png", "mid_vorn31.png", "mid_vorn_links31.png",
-            "mid_vorn_links32.png", "mid_vorn_rechts33.png", "mid_vorne9.png", "mid_vorne_links9.png",
-            "mid_vorne_rechts.png", "mid_vorne_rechts14.png", "mid_vorne_rechts2.png", "mid_vorne_rechts3.png",
-            "mid_vorne_rechts4.png", "mid_vorne_rechts6.png", "mid_vorne_rechts7.png"
+            "1 1 of 1.webp", "10 1 of 1.webp", "2 1 of 1.webp", "3 1 of 1.webp", "4 1 of 1.webp", "5 1 of 1.webp", "7 1 of 1.webp",
+            "bad__mid_oben31.webp", "bad_bad_hinten_links2.webp", "bad_bad_vorn_links30.webp", "bad_bad_vorne10.webp",
+            "bad_bad_vorne20.webp", "bad_bad_vorne21.webp", "bad_bad_vorne_links11.webp", "bad_bad_vorne_links2.webp",
+            "bad_bad_vorne_rechts22.webp", "bad_good_draufsicht3.webp", "bad_good_seitlich4.webp", "bad_good_vorn_rechts31.webp",
+            "bad_good_vorne_links22.webp", "bad_mid_oben30.webp", "bad_mid_seitlich6.webp", "bad_mid_vorne_links20.webp",
+            "bad_mid_vorne_links6.webp", "good_hinten_rechts21.webp", "good_oben_6.webp", "good_oben_rechts20.webp",
+            "good_seitlich20.webp", "good_seitlich30.webp", "good_unten20.webp", "good_unten31.webp", "good_unten6.webp",
+            "good_vorn.webp", "good_vorn30.webp", "good_vorn_rechts32.webp", "good_vorne6.webp", "good_vorne7.webp",
+            "good_vorne8.webp", "good_vorne_links12.webp", "good_vorne_links21.webp", "good_vorne_links3.webp",
+            "good_vorne_links7.webp", "good_vorne_links_hq.webp", "good_vorne_rechts20.webp", "good_vorne_rechts21.webp",
+            "mid_bad_draufsicht.webp", "mid_good_ hinten_rechts30.webp", "mid_good_draufsicht2.webp", "mid_good_hinten_links.webp",
+            "mid_good_hinten_links6.webp", "mid_hinten_rechts20.webp", "mid_mid_hinten_links20.webp", "mid_oben20.webp",
+            "mid_oben_7.webp", "mid_seitlich.webp", "mid_seitlich2.webp", "mid_seitlich21.webp", "mid_seitlich3.webp",
+            "mid_seitlich7.webp", "mid_unten.webp", "mid_unten30.webp", "mid_vorn31.webp", "mid_vorn_links31.webp",
+            "mid_vorn_links32.webp", "mid_vorn_rechts33.webp", "mid_vorne9.webp", "mid_vorne_links9.webp",
+            "mid_vorne_rechts.webp", "mid_vorne_rechts14.webp", "mid_vorne_rechts2.webp", "mid_vorne_rechts3.webp",
+            "mid_vorne_rechts4.webp", "mid_vorne_rechts6.webp", "mid_vorne_rechts7.webp"
         ];
 
         this.chairInterval = setInterval(() => {
@@ -1884,18 +1884,17 @@ class Presentation {
         if (this.infographicInterval) return;
 
         const infoList = [
-            "SozialMedia.png", "aquamation.png", "aquamation2.png", "aquamation3.png",
-            "bestattungsrechnung3.png", "bestattungsrechnung4.png", "bestatungsrechnung.png",
-            "bestatungsrechnung2.png", "betsattungsarten.png", "betsattungsarten2.png",
-            "epidemiologischeWende.png", "epidemiologischeWende2.png", "epidemiologischeWende3.png",
-            "epidemiologischeWende4.png", "epidemiologischeWende5.png", "epidemiologischeWende6.png",
-            "erdbestattung 4.png", "erdbestattung.png", "erdbestattung2.png", "erdbestattung3.png",
-            "feuerbestattung.png", "körperKompostierung.png", "körperKompostierung2.png",
-            "necrotecture.png", "necrotecture2.png", "necrotecture3.png", "promession.png",
-            "promession2.png", "trauerfarben.png", "uebersicht.png", "uebersicht2.png",
-            "verglecih_feuer_sarg_wald.png", "verglecih_feuer_sarg_wald2.png", "verglecih_feuer_sarg_wald3.png",
-            "waldbestattung.png", "waldbestattung2.png", "weltalbestattung2.png", "weltraumbestattung.png",
-            "weltraumbestattung2.png", "ökobilanzGrabstein.png"
+            "AnatomieBestattungsrechnung.webp", "SozialMedia.webp", "aquamation.webp", "aquamation2.webp", "aquamation3.webp",
+            "bestattungsrechnung3.webp", "bestattungsrechnung4.webp", "bestatungsrechnung.webp", "bestatungsrechnung2.webp",
+            "betsattungsarten.webp", "betsattungsarten2.webp", "epidemiologischeWende.webp", "epidemiologischeWende2.webp",
+            "epidemiologischeWende3.webp", "epidemiologischeWende4.webp", "epidemiologischeWende5.webp", "epidemiologischeWende6.webp",
+            "erd.webp", "erdbestattung 4.webp", "erdbestattung.webp", "erdbestattung2.webp", "erdbestattung3.webp",
+            "feuer.webp", "feuerbestattung.webp", "kompostierung.webp", "körperKompostierung.webp", "körperKompostierung2.webp",
+            "necrotecture.webp", "necrotecture2.webp", "necrotecture3.webp", "promession.webp", "promession2.webp",
+            "rechnung_bestattungskosten_sketch.webp", "socialmedia_sketch.webp", "trauerfarben.webp", "uebersicht.webp",
+            "uebersicht2.webp", "verglecih_feuer_sarg_wald.webp", "verglecih_feuer_sarg_wald2.webp", "verglecih_feuer_sarg_wald3.webp",
+            "wald.webp", "waldbestattung.webp", "waldbestattung2.webp", "weltalbestattung2.webp", "weltraum.webp",
+            "weltraumbestattung.webp", "weltraumbestattung2.webp", "ökobilanzGrabstein.webp", "übersicht.webp"
         ];
 
         this.infographicCount = 0;
@@ -1931,8 +1930,12 @@ class Presentation {
         if (this.dataStormInterval) return;
 
         const dataList = [
-            "20241021_122148 (1).jpg", "20241021_151504 (1).jpg",
-            "DSC01115.jpg", "Screenshot 2025-03-03 174927.png"
+            "20241021_122148 (1).webp", "20241021_151504 (1).webp",
+            "DSC01115.webp", "Screenshot 2025-03-03 174927.webp",
+            "no1.2_scan.webp", "no10_scan.webp", "no11_scan.webp",
+            "no12_scan.webp", "no1_scan.webp", "no3_scan.webp",
+            "no4_scan.webp", "no5_scan.webp", "no6_scan.webp",
+            "no8_scan.webp", "no9_scan.webp"
         ];
 
         this.dataCount = 0;
