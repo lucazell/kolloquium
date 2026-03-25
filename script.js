@@ -163,26 +163,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 case 14: currentStep = 5; startKPIs(); unlock(500); break;
                 case 15: currentStep = 6; startClimax(); unlock(1000); break;
                 
-                case 16:
-                    gsap.to(window, { scrollTo: "#sec-modular", duration: 1.5, ease: "power2.inOut", onComplete: () => {
-                        document.getElementById("status-text").innerText = "STATUS: MODULAR_SYSTEM";
-                        document.getElementById("status-dot").classList.replace("bg-alert", "bg-neon");
-                        initTick1();
-                        isAnimating = false;
-                    }});
+                case 16: 
+                    // Buffer tick / Narrative Pause before the big transition at 17
+                    unlock(300); 
                     break;
-                case 17: showBaukasten(); unlock(1000); break;
-                case 18: startMerge(); unlock(1000); break;
-                case 19: showReduction(); unlock(500); break;
-                case 20: showProof(); unlock(2000); break;
-                case 21: triggerShatterTransition(); unlock(2000); break;
+                case 17: 
+                    initTick1(); 
+                    unlock(3000); // Wait for the high-end counter to finish
+                    break;
+                case 18: showBaukasten(); unlock(1000); break;
+                case 19: startMerge(); unlock(1000); break;
+                case 20: showReduction(); unlock(800); break;
+                case 21: showProof(); unlock(2000); break;
                 case 22:
-                    const uiContainer = document.getElementById('ui-container');
-                    const threeCanvas = document.getElementById('three-canvas');
-                    if (uiContainer) { uiContainer.style.visibility = 'visible'; uiContainer.style.opacity = '1'; }
-                    if (threeCanvas) { threeCanvas.style.visibility = 'visible'; threeCanvas.style.opacity = '1'; }
-                    document.querySelectorAll('main, #grid-background, #interface-container').forEach(el => { if(el) el.style.display = 'none'; });
-                    unlock(500); break;
+                    // Stage change already handled in HUD Zoom for smoother transition
+                    unlock(500); 
+                    break;
             }
         }
     };
@@ -205,10 +201,10 @@ document.addEventListener("DOMContentLoaded", () => {
         if (activeTick <= 16) activeChap = "chap-pre-study";
         // MOD_01 (17-21) is the Service Design / Modular section
         else if (activeTick <= 21) activeChap = "chap-sem-01";
-        // MOD_02 (22-31) Transition to Phase 2 / Chaos
-        else if (activeTick <= 31) activeChap = "chap-sem-02";
-        // ERR_03 (32-46) Analog Infection / Clash
-        else if (activeTick <= 46) activeChap = "chap-sem-03";
+        // MOD_02 (22-30) Transition to Phase 2 / Chaos
+        else if (activeTick <= 30) activeChap = "chap-sem-02";
+        // ERR_03 (31-48) Analog Infection / Clash
+        else if (activeTick <= 48) activeChap = "chap-sem-03";
         // OUT_04 (47+) Final Balance
         else activeChap = "chap-outro";
 
@@ -285,10 +281,61 @@ document.addEventListener("DOMContentLoaded", () => {
             gsap.set(["#master-timeline", "#timeline-gradient"], { opacity: 1, visibility: "visible" });
         }
         
-        if (targetTick === 9) {
-            // Synchronize with Section 1 -> 2 transition
-            window.presentation.currentTick = 9;
-            window.presentation.executeTick(9);
+        if (targetTick === 17) {
+            // Cinematic transition to Sektion 3
+            gsap.to(window, { 
+                scrollTo: "#sec-modular", 
+                duration: 2, 
+                ease: "power3.inOut" 
+            });
+            document.getElementById("status-text").innerText = "STATUS: MODULAR_SYSTEM";
+            document.getElementById("status-dot").classList.replace("bg-alert", "bg-neon");
+            
+            // Fix: Hide the madness grid and interface before modular section starts
+            const grid = document.getElementById('grid-background');
+            if (grid) grid.classList.remove('visible');
+            const interfaceContainer = document.getElementById('interface-container');
+            if (interfaceContainer) {
+                interfaceContainer.classList.remove('visible');
+                interfaceContainer.classList.add('climax-active'); // This now has opacity: 0
+            }
+
+            // Ensure Section 3 counter elements are hidden during the zoom-in (before animation)
+            gsap.set(["#counter", "#counter-label"], { opacity: 0 });
+        }
+        
+        if (targetTick === 22) {
+            // Transition into Phase 2 / Shatter the old world
+            triggerShatterTransition();
+
+            // PRE-LOAD Phase 2 Stage behind the HUD for smooth buildup
+            const uiContainer = document.getElementById('ui-container');
+            const threeCanvas = document.getElementById('three-canvas');
+            if (uiContainer) { 
+                uiContainer.style.visibility = 'visible'; 
+                gsap.to(uiContainer, { opacity: 1, duration: 2, ease: "power2.inOut" });
+            }
+            if (threeCanvas) { 
+                threeCanvas.style.visibility = 'visible'; 
+                gsap.to(threeCanvas, { opacity: 1, duration: 2, ease: "power2.inOut" });
+            }
+            
+            // Start Phase 2 Ambient build-up immediately
+            if (presentationPhase2) {
+                presentationPhase2.prepareStage();
+            }
+            
+            // Cleanup Phase 1
+            const main = document.querySelector('main');
+            if (main) main.style.display = 'none';
+        }
+
+        if (targetTick === 31) {
+            // Transition to Phase 3 / Analog Clash
+            // Hide Phase 2 remnants to ensure black background in blur
+            if (presentationPhase2) presentationPhase2.cleanupPreviousSections();
+            gsap.to(document.body, { backgroundColor: '#000', duration: 1 });
+            gsap.set(["#master-timeline", "#timeline-gradient"], { opacity: 1, visibility: "visible" });
         }
 
         const tlEl = document.getElementById('master-timeline');
@@ -413,7 +460,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        if ([1, 9, 22, 32, 47].includes(globalNextTick) && lastZoomedTick !== globalNextTick) {
+        if ([1, 17, 22, 32, 47].includes(globalNextTick) && lastZoomedTick !== globalNextTick) {
             lastZoomedTick = globalNextTick;
             zoomInMasterTimeline(globalNextTick);
         } else {
@@ -485,9 +532,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- DIGITAL SHATTER TRANSITION ---
     function triggerShatterTransition() {
-        if (isAnimating) return;
-        isAnimating = true;
-
         const overlay = document.getElementById('shatter-overlay');
         const cracks = document.getElementById('shatter-cracks');
         const fragments = document.getElementById('shatter-fragments');
@@ -935,24 +979,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // TICK 1 Logic
     function initTick1() {
+        // High-End Counter Sequence
+        gsap.killTweensOf([modCounter, modCounterLabel]);
+        
         modCounter.textContent = "0000";
-        gsap.set(modCounterLabel, { opacity: 0, y: 10 });
+        gsap.set(modCounterLabel, { opacity: 0, y: 15 });
+
+        // Phase 1: Heavy Entry with Blur-Shift
         gsap.fromTo(modCounter,
-            { opacity: 0, y: 30, scale: 1.04 },
-            { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: 'expo.out', delay: 0.1 }
+            { opacity: 0, y: 50, scale: 0.95, filter: "blur(20px)" }, // Start from depth
+            { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.9, ease: "expo.out" }
         );
 
+        // Phase 2: Precise High-Performance Counting
         const obj = { val: 0 };
         gsap.to(obj, {
             val: 9168,
-            duration: 1.4,
-            ease: 'expo.out',
-            delay: 0.25,
-            onUpdate() {
+            duration: 2.2, // Slower for more weight and clarity
+            delay: 0.5,
+            ease: "power4.inOut", // Starts clinical, builds speed, settles smoothly
+            onUpdate: () => {
                 modCounter.textContent = Math.round(obj.val).toString().padStart(4, '0');
             },
-            onComplete() {
-                gsap.to(modCounterLabel, { opacity: 1, y: 0, duration: 0.6, ease: 'expo.out' });
+            onComplete: () => {
+                // Phase 3: Secondary Information reveal
+                gsap.to(modCounterLabel, { opacity: 1, y: 0, duration: 0.8, ease: "expo.out" });
+                
+                // Polish: Subtle Impact Pulse
+                gsap.to(modCounter, { scale: 1.01, duration: 0.1, yoyo: true, repeat: 1, ease: "sine.inOut" });
             }
         });
     }
@@ -1231,6 +1285,11 @@ class Presentation {
         this.clashContainer = document.getElementById('clash-container');
         this.chairWell = document.getElementById('chair-well');
         this.errorContainer = document.getElementById('error-container');
+        this.blueprintSvg = document.getElementById('blueprint-svg');
+        this.rebootToggle = document.getElementById('reboot-toggle');
+        this.toggleStatus = this.rebootToggle ? this.rebootToggle.querySelector('.toggle-status') : null;
+        this.chromaticFilter = document.getElementById('chromatic-aberration');
+        this.feOffsets = this.chromaticFilter ? this.chromaticFilter.querySelectorAll('feOffset') : [];
         this.zoomContainer = document.getElementById('zoom-container');
         this.realityCheck = document.getElementById('reality-check');
         this.grindTerminal = document.getElementById('grind-terminal');
@@ -1248,7 +1307,10 @@ class Presentation {
         this.scene = null;
         this.camera = null;
         this.renderer = null;
-        this.room = null;
+        this.room = null; // Legacy room, now replaced by wormhole
+        this.wormhole = null;
+        this.wormholeState = 'CALM'; 
+        this.wormholeIntensity = 0;
         this.models = [];
 
         this.initThree();
@@ -1264,14 +1326,28 @@ class Presentation {
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-        const roomSize = 500;
-        const geometry = new THREE.BoxGeometry(roomSize, roomSize, roomSize * 4);
+        // Replacement for wireframe room: The Dynamic Wormhole
+        const pathPoints = [];
+        const segmentLength = 150;
+        const totalSegments = 12; // More segments for depth
+        for (let i = 0; i < totalSegments; i++) {
+            pathPoints.push(new THREE.Vector3(0, 0, -i * segmentLength));
+        }
+        this.wormholeCurve = new THREE.CatmullRomCurve3(pathPoints);
+        const geometry = new THREE.TubeGeometry(this.wormholeCurve, 120, 50, 20, false);
         const material = new THREE.MeshBasicMaterial({
-            color: 0x39FF14, wireframe: true, side: THREE.BackSide, transparent: true, opacity: 0.2
+            color: 0x39FF14, 
+            wireframe: true, 
+            side: THREE.BackSide, 
+            transparent: true, 
+            opacity: 0.25
         });
-        this.room = new THREE.Mesh(geometry, material);
-        this.room.visible = false;
-        this.scene.add(this.room);
+        this.wormhole = new THREE.Mesh(geometry, material);
+        this.wormhole.visible = false;
+        this.scene.add(this.wormhole);
+
+        // Store original positions for deformation
+        this.wormholeBasePos = geometry.attributes.position.array.slice();
 
         this.camera.position.z = 10;
         this.scene.add(this.camera);
@@ -1282,33 +1358,62 @@ class Presentation {
         this.currentTick++;
         switch (this.currentTick) {
             case 23: await this.transitionToTick1(); break;
-            case 24: if (this.overlayLeft) this.overlayLeft.classList.add('active'); break;
-            case 25: if (this.overlayRight) this.overlayRight.classList.add('active'); break;
-            case 26: this.startChaos(); break;
-            case 27: this.applyFilter(); break;
+            case 24: 
+                if (this.overlayLeft) this.overlayLeft.classList.add('active'); 
+                this.wormholeState = 'CALM';
+                gsap.to(this, { wormholeIntensity: 0, duration: 1 });
+                break;
+            case 25: 
+                if (this.overlayRight) this.overlayRight.classList.add('active'); 
+                break;
+            case 26: 
+                this.startChaos(); 
+                this.wormholeState = 'CHAOS';
+                gsap.to(this, { wormholeIntensity: 1, duration: 1.5, ease: "power2.inOut" });
+                // Hide overlays during noise
+                if (this.overlayLeft) this.overlayLeft.classList.remove('active');
+                if (this.overlayRight) this.overlayRight.classList.remove('active');
+                break;
+            case 27: 
+                this.applyFilter(); 
+                this.wormholeState = 'NEUTRALIZED';
+                // Smooth beruhigen over 2 seconds
+                gsap.to(this, { wormholeIntensity: 0, duration: 2.0, ease: "power2.inOut" });
+                break;
             case 28: this.doMatchcut(); break;
             case 29: this.centerPoster(); break;
             case 30: await this.showConclusion(); break;
-            case 31: this.showDeadpanZero(); break;
-            case 32: this.showAnalogInfection(); break;
-            case 33: this.startChairStorm(); break;
-            case 34: this.showFatalErrors(); break;
-            case 35: this.showFakeLuftschloss(); break;
-            case 36: this.showRealityCheck(); break;
-            case 37: this.showTrueValue(); break;
-            case 38: this.showTunnelVision(); break;
-            case 39: this.showDimOut(); break;
-            // Ticks 40-43 are buffer/dead space
-            case 44: this.showMountSequence(); break;
-            case 45: this.showFile1(); break;
-            case 46: this.showFile2(); break;
-            case 47: this.showFileError(); break;
-            case 48: this.showFinalVerification(); break;
-            case 49: await this.showSystemPurge(); break;
-            case 50: this.showFoundationLine(); break;
-            case 51: /* Dummy Tick - Strategic Pause */ break;
-            case 52: this.showMicDrop(); break;
-            case 53: this.showSystemFreeze(); break;
+            case 31: 
+                zoomInMasterTimeline(31); 
+                break;
+            case 32: 
+                this.cleanupPreviousSections(); 
+                // Ensure black background
+                gsap.to(document.body, { backgroundColor: '#000', duration: 0.5 });
+                break;
+            case 33: this.showDeadpanZero(); break;
+            case 34: this.showAnalogInfection(); break;
+             case 35: this.startChairStorm(); break;
+            case 36: this.startInfographicStorm(); break;
+            case 37: this.startDataStorm(); break;
+            case 38: this.showMotionSickness(); break;
+            case 39: await this.showRebootSequence(); break;
+            case 40: this.showRealityGrid(); break;
+            case 41: this.showRealityCheck(); break; 
+            case 42: this.showTrueValue(); break;
+            case 43: this.showTunnelVision(); break;
+            case 44: this.showDimOut(); break;
+            // Buffer/dead space cases shifted (+1 further)
+            case 49: this.showMountSequence(); break;
+            case 50: this.showFile1(); break;
+            case 51: this.showFile2(); break;
+            case 52: this.showFileError(); break;
+            case 53: this.showFinalVerification(); break;
+            case 54: await this.showSystemPurge(); break;
+            case 55: this.showFoundationLine(); break;
+            case 56: /* Dummy Tick - Strategic Pause */ break;
+            case 57: this.showMicDrop(); break;
+            case 58: this.showSystemFreeze(); break;
         }
     }
 
@@ -1319,7 +1424,9 @@ class Presentation {
         ];
         ids.forEach(id => {
             const el = document.getElementById(id);
-            if (el) el.style.display = 'none';
+            if (el) {
+                gsap.to(el, { opacity: 0, duration: 0.8, onComplete: () => { el.style.display = 'none'; } });
+            }
         });
         if (this.dataCanvas) this.dataCanvas.state = 'IDLE';
     }
@@ -1369,79 +1476,220 @@ class Presentation {
             this.spawnChair(`assets/skizzen/${randomFile}`);
         }, 60);
     }
-
-    showFakeLuftschloss() {
-        if (this.zoomContainer) {
-            this.zoomContainer.classList.add('active');
-            this.zoomContainer.style.backgroundColor = '#F5F5F0';
+    showMotionSickness() {
+        if (this.clashContainer) {
+            this.clashContainer.classList.add('motion-sickness-active');
         }
-        if (this.errorContainer) this.errorContainer.style.display = 'none';
 
-        // Gridify Chairs
-        const chairs = document.querySelectorAll('.spawned-chair');
+        // Chromatic Aberration Jitter with GSAP
+        if (this.feOffsets.length >= 2) {
+            const redOffset = this.feOffsets[0];
+            const blueOffset = this.feOffsets[1];
+
+            this.chromaticTimeline = gsap.timeline({ repeat: -1 });
+            this.chromaticTimeline.to({}, {
+                duration: 0.1,
+                onUpdate: () => {
+                    const amt = 2 + Math.random() * 8;
+                    redOffset.setAttribute('dx', amt);
+                    blueOffset.setAttribute('dx', -amt);
+                }
+            });
+        }
+
+        // Container Shake
+        gsap.to(this.clashContainer, {
+            x: '+=4',
+            y: '-=4',
+            duration: 0.05,
+            repeat: -1,
+            yoyo: true,
+            ease: "none"
+        });
+    }
+
+    async showRebootSequence() {
+        if (this.clashContainer) {
+            this.clashContainer.classList.remove('motion-sickness-active');
+            gsap.killTweensOf(this.clashContainer);
+            this.cleanupClashStorm();
+        }
+
+        // --- STEP 1: POWER OFF (CUT TO BLACK) ---
+        document.body.style.backgroundColor = '#000000';
+        if (this.clashContainer) {
+            gsap.set(this.clashContainer, { opacity: 0 });
+            this.clashContainer.style.display = 'none';
+        }
+
+        if (this.rebootToggle) {
+            this.rebootToggle.classList.remove('off');
+            if (this.toggleStatus) this.toggleStatus.innerText = "POWER: ON";
+            this.rebootToggle.style.display = 'flex';
+            gsap.fromTo(this.rebootToggle, { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: "power2.out" });
+        }
+
+        await new Promise(r => setTimeout(r, 400));
+
+        // Flip to OFF
+        if (this.rebootToggle) {
+            this.rebootToggle.classList.add('off');
+            if (this.toggleStatus) this.toggleStatus.innerText = "POWER: OFF";
+        }
+
+        // --- STEP 2: PAUSE IN THE VOID ---
+        await new Promise(r => setTimeout(r, 1000));
+
+        // --- STEP 3: POWER ON (RE-FLIP) ---
+        if (this.rebootToggle) {
+            this.rebootToggle.classList.remove('off');
+            if (this.toggleStatus) this.toggleStatus.innerText = "POWER: ON";
+        }
+
+        await new Promise(r => setTimeout(r, 400));
+
+        // --- STEP 4: WHITE OUT ---
+        document.body.classList.add('white-reboot');
+        if (this.zoomContainer) {
+            this.zoomContainer.classList.add('white-mode', 'active');
+            this.zoomContainer.style.display = 'block';
+            gsap.set(this.zoomContainer, { opacity: 1 });
+        }
+
+        if (this.rebootToggle) {
+            gsap.to(this.rebootToggle, { opacity: 0, duration: 0.2, onComplete: () => {
+                this.rebootToggle.style.display = 'none';
+            }});
+        }
+    }
+
+    showBlankSlate() {
+        // Redundant - Tick 39 now uses showRebootSequence
+    }
+
+    cleanupClashStorm() {
+        if (this.chairInterval) clearInterval(this.chairInterval);
+        if (this.infographicInterval) clearInterval(this.infographicInterval);
+        if (this.dataStormInterval) clearInterval(this.dataStormInterval);
+        if (this.chromaticTimeline) this.chromaticTimeline.kill();
+    }
+
+    showRealityGrid() {
+        // --- TICK 40: GRID LABELS ON WHITE ---
+        if (this.realityCheck) {
+            this.realityCheck.style.display = 'none'; // Not built yet
+        }
+
+        const gridLines = document.getElementById('grid-lines');
+        if (gridLines) {
+            gridLines.style.opacity = '1';
+            const lines = gridLines.querySelectorAll('.grid-line');
+            if (lines.length === 0) {
+                this.generateRealityGrid(gridLines);
+            }
+            const allLines = gridLines.querySelectorAll('.grid-line');
+            allLines.forEach(l => {
+                l.classList.add('white-mode');
+                l.style.background = 'rgba(0,0,0,0.1)';
+            });
+
+            gsap.fromTo(allLines, 
+                { opacity: 0, scaleX: 0, scaleY: 0 },
+                { opacity: 1, scaleX: 1, scaleY: 1, duration: 1, stagger: 0.05, ease: "power2.out" }
+            );
+        }
+
+        const gridLabels = document.getElementById('grid-labels');
+        if (gridLabels) {
+            gsap.to(gridLabels, { opacity: 1, duration: 1.5, delay: 0.5 });
+            const serifs = gridLabels.querySelectorAll('.serif-label');
+            serifs.forEach(s => s.style.color = '#333'); // Dark serif on white
+        }
+    }
+
+    generateRealityGrid(container) {
         const cols = 10;
         const spacing = 100;
         const startX = (window.innerWidth - (cols * spacing)) / 2;
-        const startY = (window.innerHeight - (Math.ceil(chairs.length / cols) * spacing)) / 2;
-        const gridLines = document.getElementById('grid-lines');
+        const startY = (window.innerHeight - (10 * spacing)) / 2;
 
-        chairs.forEach((chair, i) => {
-            chair.classList.add('clean');
-            const r = Math.floor(i / cols);
-            const c = i % cols;
-            chair.style.left = `${startX + c * spacing}px`;
-            chair.style.top = `${startY + r * spacing}px`;
-            chair.style.transform = `scale(0.3) rotate(0deg)`;
-            chair.style.zIndex = 10;
-        });
-
-        // Dynamic Lines
-        if (gridLines) {
-            gridLines.innerHTML = '';
-            // Verticals
-            for (let c = 0; c < cols; c++) {
-                const line = document.createElement('div');
-                line.className = 'grid-line';
-                line.style.left = `${startX + c * spacing}px`;
-                line.style.top = '0';
-                line.style.width = '1px';
-                line.style.height = '100%';
-                gridLines.appendChild(line);
-            }
-            // Horizontals
-            for (let r = 0; r < Math.ceil(chairs.length / cols); r++) {
-                const line = document.createElement('div');
-                line.className = 'grid-line';
-                line.style.top = `${startY + r * spacing}px`;
-                line.style.left = '0';
-                line.style.height = '1px';
-                line.style.width = '100%';
-                gridLines.appendChild(line);
-            }
+        for (let c = 0; c < 12; c++) {
+            const line = document.createElement('div');
+            line.className = 'grid-line';
+            line.style.left = `${startX + c * spacing}px`;
+            line.style.top = '0'; line.style.width = '1px'; line.style.height = '100%';
+            line.style.background = 'rgba(57, 255, 20, 0.2)'; // Neon green for reality
+            container.appendChild(line);
         }
-
-        const labels = document.querySelectorAll('.serif-label');
-        labels.forEach((l, idx) => l.classList.add(`label-${idx + 1}`));
-
-        setTimeout(() => {
-            if (gridLines) gridLines.style.opacity = '1';
-            const gridLabels = document.getElementById('grid-labels');
-            if (gridLabels) gridLabels.style.opacity = '1';
-        }, 500);
+        for (let r = 0; r < 12; r++) {
+            const line = document.createElement('div');
+            line.className = 'grid-line';
+            line.style.top = `${startY + r * spacing}px`;
+            line.style.left = '0'; line.style.height = '1px'; line.style.width = '100%';
+            line.style.background = 'rgba(57, 255, 20, 0.2)';
+            container.appendChild(line);
+        }
     }
 
     showRealityCheck() {
-        if (this.clashContainer) this.clashContainer.style.display = 'none';
+        // --- TICK 41: BACK TO BLACK + GREEN BULLSHIT ---
+        document.body.classList.remove('white-reboot');
+        document.body.style.backgroundColor = '#050505';
+
         if (this.zoomContainer) {
+            this.zoomContainer.classList.remove('white-mode');
             this.zoomContainer.style.backgroundColor = '#050505';
+            gsap.to(this.zoomContainer, { backgroundColor: '#050505', duration: 0.5 });
+            
+            // Cleanup UI for transition
             const gl = document.getElementById('grid-lines');
             if (gl) gl.style.display = 'none';
             const glabels = document.getElementById('grid-labels');
             if (glabels) glabels.style.display = 'none';
-            // Hide chairs
-            document.querySelectorAll('.spawned-chair').forEach(c => c.style.display = 'none');
+            
+            // Hide previous spawned elements
+            document.querySelectorAll('.spawned-chair, .spawned-infographic').forEach(c => c.style.display = 'none');
         }
-        if (this.realityCheck) this.realityCheck.style.display = 'block';
+
+        // Force background cut on body just in case
+        gsap.set(document.body, { backgroundColor: '#050505' });
+
+        // Grid Lines back to Neon (if ever reused)
+        const lines = document.querySelectorAll('.grid-line');
+        lines.forEach(l => {
+            l.classList.remove('white-mode');
+            l.style.background = 'rgba(57, 255, 20, 0.15)';
+        });
+
+        // Labels back to Green/Gray
+        const labels = document.querySelectorAll('.serif-label');
+        labels.forEach(s => s.style.color = '#666');
+
+        if (this.clashContainer) this.clashContainer.style.display = 'none';
+
+        if (this.realityCheck) {
+            this.realityCheck.classList.remove('white-mode');
+            this.realityCheck.style.display = 'block';
+            this.realityCheck.style.color = '#39FF14'; 
+            gsap.fromTo(this.realityCheck, { scale: 1.5, opacity: 0 }, { 
+                scale: 1, 
+                opacity: 1, 
+                duration: 0.8, 
+                ease: "back.out(2)" 
+            });
+        }
+    }
+
+    showBlueprint() {
+        // Obsolete
+    }
+
+    showFakeLuftschloss() {
+        // Obsolete
+    }
+
+    showFatalErrors() {
+        // Obsolete but kept for logic safety until fully shifted
     }
 
     async showTrueValue() {
@@ -1632,6 +1880,90 @@ class Presentation {
         this.chairCount++;
     }
 
+    startInfographicStorm() {
+        if (this.infographicInterval) return;
+
+        const infoList = [
+            "SozialMedia.png", "aquamation.png", "aquamation2.png", "aquamation3.png",
+            "bestattungsrechnung3.png", "bestattungsrechnung4.png", "bestatungsrechnung.png",
+            "bestatungsrechnung2.png", "betsattungsarten.png", "betsattungsarten2.png",
+            "epidemiologischeWende.png", "epidemiologischeWende2.png", "epidemiologischeWende3.png",
+            "epidemiologischeWende4.png", "epidemiologischeWende5.png", "epidemiologischeWende6.png",
+            "erdbestattung 4.png", "erdbestattung.png", "erdbestattung2.png", "erdbestattung3.png",
+            "feuerbestattung.png", "körperKompostierung.png", "körperKompostierung2.png",
+            "necrotecture.png", "necrotecture2.png", "necrotecture3.png", "promession.png",
+            "promession2.png", "trauerfarben.png", "uebersicht.png", "uebersicht2.png",
+            "verglecih_feuer_sarg_wald.png", "verglecih_feuer_sarg_wald2.png", "verglecih_feuer_sarg_wald3.png",
+            "waldbestattung.png", "waldbestattung2.png", "weltalbestattung2.png", "weltraumbestattung.png",
+            "weltraumbestattung2.png", "ökobilanzGrabstein.png"
+        ];
+
+        this.infographicCount = 0;
+        this.infographicInterval = setInterval(() => {
+            if (this.infographicCount > 50) return; // Cap density
+            const file = infoList[Math.floor(Math.random() * infoList.length)];
+            this.spawnInfographic(`assets/infografik/${file}`);
+        }, 120);
+    }
+
+    spawnInfographic(src) {
+        const img = document.createElement('img');
+        img.src = src;
+        img.className = 'spawned-infographic'; // Reusing style for consistency
+
+        const x = Math.random() * 100;
+        const y = Math.random() * 100;
+        const rot = (Math.random() - 0.5) * 45;
+        const size = 300 + Math.random() * 400;
+        const z = 200 + Math.floor(Math.random() * 100); // Always on top of chairs
+
+        img.style.left = `${x}%`;
+        img.style.top = `${y}%`;
+        img.style.width = `${size}px`;
+        img.style.transform = `translate(-50%, -50%) rotate(${rot}deg)`;
+        img.style.zIndex = z;
+
+        if (this.chairWell) this.chairWell.appendChild(img);
+        this.infographicCount++;
+    }
+
+    startDataStorm() {
+        if (this.dataStormInterval) return;
+
+        const dataList = [
+            "20241021_122148 (1).jpg", "20241021_151504 (1).jpg",
+            "DSC01115.jpg", "Screenshot 2025-03-03 174927.png"
+        ];
+
+        this.dataCount = 0;
+        this.dataStormInterval = setInterval(() => {
+            if (this.dataCount > 40) return; // Cap density
+            const file = dataList[Math.floor(Math.random() * dataList.length)];
+            this.spawnDataImage(`assets/datauriso/${file}`);
+        }, 150);
+    }
+
+    spawnDataImage(src) {
+        const img = document.createElement('img');
+        img.src = src;
+        img.className = 'spawned-infographic'; // Reuse logic/animation
+
+        const x = Math.random() * 100;
+        const y = Math.random() * 100;
+        const rot = (Math.random() - 0.5) * 30;
+        const size = 400 + Math.random() * 500;
+        const z = 300 + Math.floor(Math.random() * 100); // On top of infographics
+
+        img.style.left = `${x}%`;
+        img.style.top = `${y}%`;
+        img.style.width = `${size}px`;
+        img.style.transform = `translate(-50%, -50%) rotate(${rot}deg)`;
+        img.style.zIndex = z;
+
+        if (this.chairWell) this.chairWell.appendChild(img);
+        this.dataCount++;
+    }
+
     showFatalErrors() {
         if (this.chairInterval) clearInterval(this.chairInterval);
 
@@ -1679,17 +2011,27 @@ class Presentation {
         }
     }
 
+    prepareStage() {
+        // Ambient wormhole reveal
+        if (this.wormhole) {
+            this.wormhole.visible = true;
+            this.wormhole.material.opacity = 0;
+            gsap.to(this.wormhole.material, { opacity: 0.25, duration: 3, ease: "power2.inOut" });
+            this.wormholeState = 'CALM';
+        }
+    }
+
     async transitionToTick1() {
         this.isTransitioning = true;
         if (this.phoneFrame) this.phoneFrame.classList.add('rotate-out');
-        setTimeout(() => {
-            this.triggerFlash();
-            if (this.room) this.room.visible = true;
-            const t1 = document.getElementById('tick-1');
-            if (t1) t1.style.display = 'none';
-            this.loadModels();
-            this.isTransitioning = false;
-        }, 600);
+        
+        // Satisfying build-up: Models start loading/appearing
+        this.triggerFlash();
+        const t1 = document.getElementById('tick-1');
+        if (t1) gsap.to(t1, { opacity: 0, duration: 0.5, onComplete: () => { t1.style.display = 'none'; } });
+        
+        this.loadModels();
+        this.isTransitioning = false;
     }
 
     startChaos() {
@@ -1741,10 +2083,11 @@ class Presentation {
         if (this.dataCanvas && this.dataCanvas.canvas) this.dataCanvas.canvas.classList.remove('active');
         if (this.terminalScreen) this.terminalScreen.classList.add('active');
 
-        const lines = ["> FOCUS: CODE", "> FOCUS: UX", "> FOCUS: STRATEGIE"];
+        const lines = ["> FOCUS: CODE", "> FOCUS: UX"];
         for (let line of lines) {
             await this.typeLine(line);
             if (this.terminalContent) this.terminalContent.innerHTML += "\n";
+            await new Promise(r => setTimeout(r, 600)); // Smooth pause between lines
         }
     }
 
@@ -1773,13 +2116,54 @@ class Presentation {
         modelNames.forEach((name, index) => {
             loader.load(name, (gltf) => {
                 const model = gltf.scene;
-                model.traverse(c => { if (c.isMesh) c.material = new THREE.MeshBasicMaterial({ color: 0x39FF14, wireframe: true }); });
+                model.traverse(c => { 
+                    if (c.isMesh) {
+                        c.material = new THREE.MeshBasicMaterial({ color: 0x39FF14, wireframe: true, transparent: true, opacity: 0 });
+                    }
+                });
                 model.position.copy(positions[index]);
-                model.scale.set(3, 3, 3);
+                model.scale.set(0, 0, 0); // Start from zero for satisfying entrance
                 this.camera.add(model);
-                this.models.push({
+                
+                const modelObj = {
                     mesh: model,
                     rotSpeed: { x: 0.002 + Math.random() * 0.002, y: 0.005, z: 0.001 }
+                };
+                this.models.push(modelObj);
+
+                // Satisfying Digital Entrance Logic
+                gsap.fromTo(model.scale, 
+                    { x: 0, y: 0, z: 0 },
+                    { 
+                        x: 3, y: 3, z: 3, 
+                        duration: 1.4, 
+                        delay: index * 0.3, 
+                        ease: "back.out(1.7)" // High-end mechanical snap
+                    }
+                );
+
+                model.traverse(c => {
+                    if (c.isMesh) {
+                        // Digital pulse-in
+                        gsap.fromTo(c.material, 
+                            { opacity: 0 },
+                            { 
+                                opacity: 1, 
+                                duration: 1, 
+                                delay: index * 0.3,
+                                onStart: () => {
+                                    // Subtle flicker during construction
+                                    gsap.to(c.material, { 
+                                        opacity: 0.1, 
+                                        duration: 0.05, 
+                                        repeat: 5, 
+                                        yoyo: true, 
+                                        ease: "none" 
+                                    });
+                                }
+                            }
+                        );
+                    }
                 });
             });
         });
@@ -1787,13 +2171,66 @@ class Presentation {
 
     animate() {
         requestAnimationFrame(() => this.animate());
-        if (this.room && this.room.visible) {
-            this.room.position.z += 0.5;
-            if (this.room.position.z > 500) this.room.position.z = 0;
+        const time = Date.now() * 0.001;
+
+        if (this.wormhole && this.wormhole.visible) {
+            // Forward movement - MUST match a periodicity in the noise
+            const segmentDist = 150;
+            this.wormhole.position.z += 0.8; 
+            if (this.wormhole.position.z > segmentDist) this.wormhole.position.z -= segmentDist;
+
+            // Vertex Deformation based on intensity
+            const pos = this.wormhole.geometry.attributes.position;
+            
+            // Lerp between CALM (0) and CHAOS (1)
+            // REDUCED INTENSITY: amp: 0.8 -> 3.5, freq: 2.0 -> 8.0
+            const amp = 0.8 + (this.wormholeIntensity * 2.7); 
+            const freq = 1.5 + (this.wormholeIntensity * 6.5); 
+
+            // SEAMLESS PERIODICITY: k must be a multiple of (2 * PI / segmentDist)
+            const k = (2 * Math.PI) / segmentDist; 
+
+            for (let i = 0; i < pos.count; i++) {
+                const bx = this.wormholeBasePos[i * 3];
+                const by = this.wormholeBasePos[i * 3 + 1];
+                const bz = this.wormholeBasePos[i * 3 + 2];
+
+                // SPATIAL NOISE: use WORLD Z (bz + mesh.pos.z) for absolute seamless transition
+                const worldZ = bz + this.wormhole.position.z;
+                const noiseX = Math.sin(worldZ * k + time * freq) * amp;
+                const noiseY = Math.cos(worldZ * k + time * freq) * amp;
+                
+                // Reduced Jitter
+                const jitter = (this.wormholeIntensity > 0.5) ? (Math.random() - 0.5) * (this.wormholeIntensity * 1.5) : 0;
+                
+                pos.setX(i, bx + noiseX + jitter);
+                pos.setY(i, by + noiseY + jitter);
+            }
+            pos.needsUpdate = true;
+
+            // Visual Polish: Color Shifting / Pulsing based on Intensity
+            if (this.wormholeIntensity > 0.1) {
+                const wave = Math.sin(time * 12) * 0.5 + 0.5; // Slower pulse
+                const chaosMod = this.wormholeIntensity;
+                this.wormhole.material.color.setRGB(0.2 + (wave * 0.3 * chaosMod), 1.0, 0.2); 
+                this.wormhole.material.opacity = 0.2 + (wave * 0.15 * chaosMod);
+            } else {
+                this.wormhole.material.color.setHex(0x39FF14);
+                this.wormhole.material.opacity = 0.25;
+            }
+
             this.models.forEach(m => {
-                m.mesh.rotation.x += m.rotSpeed.x;
-                m.mesh.rotation.y += m.rotSpeed.y;
-                m.mesh.rotation.z += m.rotSpeed.z;
+                // Reduced jitter for models
+                if (this.wormholeIntensity > 0.2) {
+                    const jitterX = (Math.random() - 0.5) * this.wormholeIntensity * 0.1;
+                    const jitterY = (Math.random() - 0.5) * this.wormholeIntensity * 0.1;
+                    m.mesh.position.x += jitterX;
+                    m.mesh.position.y += jitterY;
+                }
+
+                m.mesh.rotation.x += m.rotSpeed.x * (1 + this.wormholeIntensity * 2);
+                m.mesh.rotation.y += m.rotSpeed.y * (1 + this.wormholeIntensity * 2);
+                m.mesh.rotation.z += m.rotSpeed.z * (1 + this.wormholeIntensity * 2);
             });
         }
         if (this.dataCanvas) this.dataCanvas.update();

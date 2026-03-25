@@ -585,9 +585,9 @@
     <div id="zoom-container" class="pr-[var(--safe-zone)] box-border">
         <div id="grid-lines"></div>
         <div id="grid-labels">
-            <div class="serif-label">Grid-Structure</div>
-            <div class="serif-label">Tension</div>
-            <div class="serif-label">Analog Space</div>
+            <div class="serif-label label-1">Grid-Structure</div>
+            <div class="serif-label label-2">Tension</div>
+            <div class="serif-label label-3">Analog Space</div>
         </div>
         <div id="reality-check">[ // BULLSHIT ]</div>
         <div id="grind-terminal">
@@ -627,8 +627,8 @@
             <div class="label">FILE: PAPPE_01.DMP</div>
         </div>
         <div id="overlay-right" class="image-overlay">
-            <img id="img-right" src="assets/wiredundweird/prototype_cardboard.png" alt="System Dump 2">
-            <div class="label">FILE: PAPPE_02.DMP</div>
+            <img id="img-right" src="assets/wiredundweird/prototyp.JPG" alt="System Dump 2">
+            <div class="label">FILE: PROTOTYPE.DMP</div>
         </div>
 
         <div id="matchcut-overlay">
@@ -651,9 +651,36 @@
         </div>
 
         <div id="clash-container">
+            <!-- Chromatic Aberration Filter Definition -->
+            <svg style="position: absolute; width: 0; height: 0;">
+                <filter id="chromatic-aberration">
+                    <feMorphology operator="dilate" radius="1" in="SourceGraphic" result="dilated"/>
+                    <feColorMatrix in="dilated" type="matrix" 
+                        values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="red"/>
+                    <feColorMatrix in="dilated" type="matrix" 
+                        values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="green"/>
+                    <feColorMatrix in="dilated" type="matrix" 
+                        values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="blue"/>
+                    
+                    <feOffset in="red" dx="1.5" dy="0" result="red-offset"/>
+                    <feOffset in="blue" dx="-1.5" dy="0" result="blue-offset"/>
+                    
+                    <feBlend in="red-offset" in2="green" mode="screen" result="rg"/>
+                    <feBlend in="rg" in2="blue-offset" mode="screen"/>
+                </filter>
+            </svg>
+
             <div id="deadpan-zero">[ 0 ]</div>
             <div id="chair-well"></div>
+            <svg id="blueprint-svg"></svg>
             <div id="error-container"></div>
+        </div>
+
+        <div id="reboot-toggle">
+            <div class="toggle-track">
+                <div class="toggle-handle"></div>
+            </div>
+            <div class="toggle-status">POWER: ON</div>
         </div>
     </div>
 
