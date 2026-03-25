@@ -1810,3 +1810,86 @@ body.white-reboot {
 .grid-line.white-mode {
     background: rgba(0, 0, 0, 0.1) !important;
 }
+/* ========================
+   ACT 3: INERTIA & CLARITY
+   ======================== */
+
+.perspective-1000 {
+    perspective: 1000px;
+}
+
+.preserve-3d {
+    transform-style: preserve-3d;
+}
+
+#voxel-block {
+    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#voxel-block .face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #333; /* Default dark grey */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backface-visibility: visible;
+    transition: background 0.8s ease, border 0.8s ease, box-shadow 0.8s ease;
+}
+
+/* 3D Cube Faces Positioning */
+#voxel-block .face.front  { transform: rotateY(0deg) translateZ(64px); }
+#voxel-block .face.back   { transform: rotateY(180deg) translateZ(64px); }
+#voxel-block .face.left   { transform: rotateY(-90deg) translateZ(64px); }
+#voxel-block .face.right  { transform: rotateY(90deg) translateZ(64px); }
+#voxel-block .face.top    { transform: rotateX(90deg) translateZ(64px); }
+#voxel-block .face.bottom { transform: rotateX(-90deg) translateZ(64px); }
+
+/* Steel Plate Transformation */
+#voxel-block.forged .face {
+    background: linear-gradient(135deg, #71797E 0%, #B0C4DE 50%, #71797E 100%);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.2), 0 0 30px rgba(113, 121, 126, 0.3);
+}
+
+/* Tech World Light Trails */
+.light-trail {
+    position: absolute;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #FFFFFF, transparent);
+    filter: blur(2px);
+    opacity: 0.6;
+}
+
+/* UI Streams */
+.ui-stream {
+    position: absolute;
+    height: 2px;
+    background: #00F0FF;
+    filter: blur(1px);
+    box-shadow: 0 0 10px #00F0FF;
+    opacity: 0.7;
+}
+
+.ui-node {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: #00F0FF;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #00F0FF;
+}
+
+/* Charcoal State for Tick 41 */
+body.dimmed-charcoal #act3-container {
+    background-color: #121212;
+}
+
+#clarity-text {
+    text-shadow: 0 0 40px rgba(0, 240, 255, 0.2);
+    letter-spacing: -0.08em;
+}
+

@@ -1640,21 +1640,12 @@ class Presentation {
             this.zoomContainer.classList.remove('white-mode');
             this.zoomContainer.style.backgroundColor = '#050505';
             gsap.to(this.zoomContainer, { backgroundColor: '#050505', duration: 0.5 });
-            
-            // Cleanup UI for transition
-            const gl = document.getElementById('grid-lines');
-            if (gl) gl.style.display = 'none';
-            const glabels = document.getElementById('grid-labels');
-            if (glabels) glabels.style.display = 'none';
-            
-            // Hide previous spawned elements
-            document.querySelectorAll('.spawned-chair, .spawned-infographic').forEach(c => c.style.display = 'none');
         }
 
-        // Force background cut on body just in case
+        // Force background cut
         gsap.set(document.body, { backgroundColor: '#050505' });
 
-        // Grid Lines back to Neon (if ever reused)
+        // Grid Lines back to Neon
         const lines = document.querySelectorAll('.grid-line');
         lines.forEach(l => {
             l.classList.remove('white-mode');
@@ -1664,8 +1655,6 @@ class Presentation {
         // Labels back to Green/Gray
         const labels = document.querySelectorAll('.serif-label');
         labels.forEach(s => s.style.color = '#666');
-
-        if (this.clashContainer) this.clashContainer.style.display = 'none';
 
         if (this.realityCheck) {
             this.realityCheck.classList.remove('white-mode');
@@ -1690,6 +1679,19 @@ class Presentation {
 
     showFatalErrors() {
         // Obsolete but kept for logic safety until fully shifted
+    }
+    showRealityCheck() {
+        if (this.clashContainer) this.clashContainer.style.display = 'none';
+        if (this.zoomContainer) {
+            this.zoomContainer.style.backgroundColor = '#050505';
+            const gl = document.getElementById('grid-lines');
+            if (gl) gl.style.display = 'none';
+            const glabels = document.getElementById('grid-labels');
+            if (glabels) glabels.style.display = 'none';
+            // Hide chairs
+            document.querySelectorAll('.spawned-chair').forEach(c => c.style.display = 'none');
+        }
+        if (this.realityCheck) this.realityCheck.style.display = 'block';
     }
 
     async showTrueValue() {
@@ -1885,16 +1887,18 @@ class Presentation {
 
         const infoList = [
             "AnatomieBestattungsrechnung.webp", "SozialMedia.webp", "aquamation.webp", "aquamation2.webp", "aquamation3.webp",
-            "bestattungsrechnung3.webp", "bestattungsrechnung4.webp", "bestatungsrechnung.webp", "bestatungsrechnung2.webp",
-            "betsattungsarten.webp", "betsattungsarten2.webp", "epidemiologischeWende.webp", "epidemiologischeWende2.webp",
-            "epidemiologischeWende3.webp", "epidemiologischeWende4.webp", "epidemiologischeWende5.webp", "epidemiologischeWende6.webp",
+            "bestattungsrechnung3.webp", "bestattungsrechnung4.webp", "bestatungsrechnung.webp",
+            "bestatungsrechnung2.webp", "betsattungsarten.webp", "betsattungsarten2.webp",
+            "epidemiologischeWende.webp", "epidemiologischeWende2.webp", "epidemiologischeWende3.webp",
+            "epidemiologischeWende4.webp", "epidemiologischeWende5.webp", "epidemiologischeWende6.webp",
             "erd.webp", "erdbestattung 4.webp", "erdbestattung.webp", "erdbestattung2.webp", "erdbestattung3.webp",
             "feuer.webp", "feuerbestattung.webp", "kompostierung.webp", "körperKompostierung.webp", "körperKompostierung2.webp",
-            "necrotecture.webp", "necrotecture2.webp", "necrotecture3.webp", "promession.webp", "promession2.webp",
-            "rechnung_bestattungskosten_sketch.webp", "socialmedia_sketch.webp", "trauerfarben.webp", "uebersicht.webp",
-            "uebersicht2.webp", "verglecih_feuer_sarg_wald.webp", "verglecih_feuer_sarg_wald2.webp", "verglecih_feuer_sarg_wald3.webp",
-            "wald.webp", "waldbestattung.webp", "waldbestattung2.webp", "weltalbestattung2.webp", "weltraum.webp",
-            "weltraumbestattung.webp", "weltraumbestattung2.webp", "ökobilanzGrabstein.webp", "übersicht.webp"
+            "necrotecture.webp", "necrotecture2.webp", "necrotecture3.webp", "promession.webp",
+            "promession2.webp", "rechnung_bestattungskosten_sketch.webp", "socialmedia_sketch.webp", 
+            "trauerfarben.webp", "uebersicht.webp", "uebersicht2.webp",
+            "verglecih_feuer_sarg_wald.webp", "verglecih_feuer_sarg_wald2.webp", "verglecih_feuer_sarg_wald3.webp",
+            "wald.webp", "waldbestattung.webp", "waldbestattung2.webp", "weltalbestattung2.webp", "weltraum.webp", "weltraumbestattung.webp",
+            "weltraumbestattung2.webp", "ökobilanzGrabstein.webp", "übersicht.webp"
         ];
 
         this.infographicCount = 0;
@@ -1932,10 +1936,9 @@ class Presentation {
         const dataList = [
             "20241021_122148 (1).webp", "20241021_151504 (1).webp",
             "DSC01115.webp", "Screenshot 2025-03-03 174927.webp",
-            "no1.2_scan.webp", "no10_scan.webp", "no11_scan.webp",
-            "no12_scan.webp", "no1_scan.webp", "no3_scan.webp",
-            "no4_scan.webp", "no5_scan.webp", "no6_scan.webp",
-            "no8_scan.webp", "no9_scan.webp"
+            "no1.2_scan.webp", "no10_scan.webp", "no11_scan.webp", "no12_scan.webp",
+            "no1_scan.webp", "no3_scan.webp", "no4_scan.webp", "no5_scan.webp",
+            "no6_scan.webp", "no8_scan.webp", "no9_scan.webp"
         ];
 
         this.dataCount = 0;
