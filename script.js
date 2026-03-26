@@ -149,8 +149,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     gsap.to(window, {
                         scrollTo: "#sec-pro", duration: 1.5, delay: 0.2, ease: "power2.inOut",
                         onComplete: () => {
-                            document.getElementById("status-text").innerText = "STATUS: SYSTEM_MADNESS";
-                            document.getElementById("status-dot").classList.replace("bg-neon", "bg-alert");
                             isAnimating = false;
                         }
                     });
@@ -203,9 +201,9 @@ document.addEventListener("DOMContentLoaded", () => {
         else if (activeTick <= 21) activeChap = "chap-sem-01";
         // MOD_02 (22-30) Transition to Phase 2 / Chaos
         else if (activeTick <= 30) activeChap = "chap-sem-02";
-        // ERR_03 (31-48) Analog Infection / Clash
-        else if (activeTick <= 48) activeChap = "chap-sem-03";
-        // OUT_04 (47+) Final Balance
+        // ERR_03 (31-38) Analog Infection / Clash
+        else if (activeTick <= 38) activeChap = "chap-sem-03";
+        // OUT_04 (39+) Final Balance
         else activeChap = "chap-outro";
 
         if (activePulseTween1) {
@@ -257,6 +255,25 @@ document.addEventListener("DOMContentLoaded", () => {
                 gsap.set(label, { color: 'rgba(255,255,255,0.4)', textShadow: 'none', fontWeight: '400', scale: 1, opacity: 1 });
             }
         });
+
+        // ─── RADICALLY SIMPLIFIED STATUS OVERLAY ─────────────────
+        const statusText = document.getElementById("status-text");
+        const statusDot = document.getElementById("status-dot");
+        if (statusText && statusDot) {
+            if (activeTick <= 30) {
+                // GbR bis Ende 2. Semester
+                statusText.innerText = "STATUS: RUNNING";
+                statusDot.className = "w-2 h-2 rounded-full animate-pulse bg-neon";
+            } else if (activeTick <= 41) {
+                // Analog Clash / Stühle / Bullshit
+                statusText.innerText = "STATUS: SYSTEM_ERROR";
+                statusDot.className = "w-2 h-2 rounded-full animate-pulse bg-alert";
+            } else {
+                // Das neue Mindset / Kiste
+                statusText.innerText = "STATUS: RECALIBRATED";
+                statusDot.className = "w-2 h-2 rounded-full animate-pulse bg-neon";
+            }
+        }
     }
 
     function zoomInMasterTimeline(targetTick) {
@@ -288,8 +305,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 duration: 2, 
                 ease: "power3.inOut" 
             });
-            document.getElementById("status-text").innerText = "STATUS: MODULAR_SYSTEM";
-            document.getElementById("status-dot").classList.replace("bg-alert", "bg-neon");
             
             // Fix: Hide the madness grid and interface before modular section starts
             const grid = document.getElementById('grid-background');
@@ -338,6 +353,11 @@ document.addEventListener("DOMContentLoaded", () => {
             gsap.set(["#master-timeline", "#timeline-gradient"], { opacity: 1, visibility: "visible" });
         }
 
+        if (targetTick === 39) {
+            // Jump the active dot to OUT_04: SYSTEM_BILANZ while the zoom-in happens.
+            updateTimelineState(39); 
+        }
+
         const tlEl = document.getElementById('master-timeline');
         const chapters = document.querySelectorAll('.timeline-chapter');
         const rect = tlEl.getBoundingClientRect();
@@ -382,14 +402,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 0);
     }
 
-    function zoomOutMasterTimeline() {
+    function zoomOutMasterTimeline(skipProceed = false) {
         timelineAnimating = true;
         isMasterTimelineZoomed = false;
 
         let tl = gsap.timeline({
             onComplete: () => {
                 timelineAnimating = false;
-                proceedWithTick();
+                if (!skipProceed) proceedWithTick();
             }
         });
 
@@ -460,7 +480,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        if ([1, 17, 22, 32, 47].includes(globalNextTick) && lastZoomedTick !== globalNextTick) {
+        if ([1, 17, 22, 32].includes(globalNextTick) && lastZoomedTick !== globalNextTick) {
             lastZoomedTick = globalNextTick;
             zoomInMasterTimeline(globalNextTick);
         } else {
@@ -1297,7 +1317,7 @@ class Presentation {
         this.mountTerminal = document.getElementById('mount-terminal');
         this.mountContent = document.getElementById('mount-content');
         this.foundationLine = document.getElementById('foundation-line');
-        this.finalText = document.getElementById('final-text');
+        this.finalText = document.getElementById('final-terminal-wrap');
         this.dataCanvas = new DataCanvas();
 
         this.chairInterval = null;
@@ -1355,21 +1375,24 @@ class Presentation {
     }
 
     async nextTick() {
+        if (isAnimating) return;
+        isAnimating = true;
         this.currentTick++;
         switch (this.currentTick) {
             case 23: await this.transitionToTick1(); break;
             case 24: 
                 if (this.overlayLeft) this.overlayLeft.classList.add('active'); 
                 this.wormholeState = 'CALM';
-                gsap.to(this, { wormholeIntensity: 0, duration: 1 });
+                gsap.to(this, { wormholeIntensity: 0, duration: 1, onComplete: () => { isAnimating = false; } });
                 break;
             case 25: 
                 if (this.overlayRight) this.overlayRight.classList.add('active'); 
+                isAnimating = false;
                 break;
             case 26: 
                 this.startChaos(); 
                 this.wormholeState = 'CHAOS';
-                gsap.to(this, { wormholeIntensity: 1, duration: 1.5, ease: "power2.inOut" });
+                gsap.to(this, { wormholeIntensity: 1, duration: 1.5, ease: "power2.inOut", onComplete: () => { isAnimating = false; } });
                 // Hide overlays during noise
                 if (this.overlayLeft) this.overlayLeft.classList.remove('active');
                 if (this.overlayRight) this.overlayRight.classList.remove('active');
@@ -1378,42 +1401,36 @@ class Presentation {
                 this.applyFilter(); 
                 this.wormholeState = 'NEUTRALIZED';
                 // Smooth beruhigen over 2 seconds
-                gsap.to(this, { wormholeIntensity: 0, duration: 2.0, ease: "power2.inOut" });
+                gsap.to(this, { wormholeIntensity: 0, duration: 2.0, ease: "power2.inOut", onComplete: () => { isAnimating = false; } });
                 break;
             case 28: this.doMatchcut(); break;
-            case 29: this.centerPoster(); break;
-            case 30: await this.showConclusion(); break;
+            case 29: this.centerPoster(); isAnimating = false; break;
+            case 30: await this.showConclusion(); isAnimating = false; break;
             case 31: 
                 zoomInMasterTimeline(31); 
+                // Note: zoomInMasterTimeline releases a different flag (timelineAnimating), 
+                // but we need to release isAnimating too so user can proceed to next interaction
+                setTimeout(() => { isAnimating = false; }, 1500);
                 break;
             case 32: 
                 this.cleanupPreviousSections(); 
                 // Ensure black background
-                gsap.to(document.body, { backgroundColor: '#000', duration: 0.5 });
+                gsap.to(document.body, { backgroundColor: '#000', duration: 0.5, onComplete: () => { isAnimating = false; } });
                 break;
-            case 33: this.showDeadpanZero(); break;
-            case 34: this.showAnalogInfection(); break;
-             case 35: this.startChairStorm(); break;
-            case 36: this.startInfographicStorm(); break;
-            case 37: this.startDataStorm(); break;
-            case 38: this.showMotionSickness(); break;
-            case 39: await this.showRebootSequence(); break;
-            case 40: this.showRealityGrid(); break;
-            case 41: this.showRealityCheck(); break; 
-            case 42: this.showTrueValue(); break;
-            case 43: this.showTunnelVision(); break;
+            case 33: this.showDeadpanZero(); isAnimating = false; break;
+            case 34: this.showAnalogInfection(); isAnimating = false; break;
+            case 35: this.startChairStorm(); isAnimating = false; break;
+            case 36: this.startInfographicStorm(); isAnimating = false; break;
+            case 37: this.startDataStorm(); isAnimating = false; break;
+            case 38: this.showMotionSickness(); isAnimating = false; break;
+            case 39: this.timelineCutToBlack(); break;
+            case 40: this.showLuftschloss(); break;
+            case 41: this.showBullshitCut(); break;
+            case 42: await this.showCleanResilience(); break;
+            case 43: await this.showCleanClarity(); break;
             case 44: this.showDimOut(); break;
-            // Buffer/dead space cases shifted (+1 further)
-            case 49: this.showMountSequence(); break;
-            case 50: this.showFile1(); break;
-            case 51: this.showFile2(); break;
-            case 52: this.showFileError(); break;
-            case 53: this.showFinalVerification(); break;
-            case 54: await this.showSystemPurge(); break;
-            case 55: this.showFoundationLine(); break;
-            case 56: /* Dummy Tick - Strategic Pause */ break;
-            case 57: this.showMicDrop(); break;
-            case 58: this.showSystemFreeze(); break;
+            case 45: this.showMicDrop(); break;
+            default: isAnimating = false; break;
         }
     }
 
@@ -1442,6 +1459,8 @@ class Presentation {
         if (this.clashContainer) {
             this.clashContainer.className = 'active tick-9';
         }
+        // FIX 1: Hide the black gradient edge — it looks broken on light/chaos backgrounds
+        gsap.to('#timeline-gradient', { opacity: 0, duration: 0.8, ease: 'power2.inOut' });
     }
 
     startChairStorm() {
@@ -1481,242 +1500,267 @@ class Presentation {
             this.clashContainer.classList.add('motion-sickness-active');
         }
 
-        // Chromatic Aberration Jitter with GSAP
+        // FIX 3: Epilepsy-safe — slower interval (0.15s), max offset capped at 4px
         if (this.feOffsets.length >= 2) {
             const redOffset = this.feOffsets[0];
             const blueOffset = this.feOffsets[1];
 
             this.chromaticTimeline = gsap.timeline({ repeat: -1 });
             this.chromaticTimeline.to({}, {
-                duration: 0.1,
+                duration: 0.15,
                 onUpdate: () => {
-                    const amt = 2 + Math.random() * 8;
+                    const amt = 1 + Math.random() * 4; // max 4px (was 8px)
                     redOffset.setAttribute('dx', amt);
                     blueOffset.setAttribute('dx', -amt);
                 }
             });
         }
 
-        // Container Shake
+        // FIX 3: Reduced shake intensity: ±2px instead of ±4px
         gsap.to(this.clashContainer, {
-            x: '+=4',
-            y: '-=4',
-            duration: 0.05,
+            x: '+=2',
+            y: '-=2',
+            duration: 0.12,
             repeat: -1,
             yoyo: true,
             ease: "none"
         });
     }
 
-    async showRebootSequence() {
+    // ─── TICK 39: Timeline Cut To Black ───────────────────────────────────────
+    timelineCutToBlack() {
+        // FIX 5: isAnimating is released by the phase-1 controller via unlock().
+        // For Phase 2 ticks we expose an unlock helper for cases that need manual gating.
+        // Tick 39 blocks until the zoomOut (Tick 40) happens — no extra unlock needed here;
+        // the zoom animation itself gates the next interaction via timelineAnimating flag.
+
+        // Zoom the master timeline to center spotlight (also calls updateTimelineState(49) via Fix 4)
+        zoomInMasterTimeline(39);
+
+        // While zoomed: stop all chaos motion-sickness state
         if (this.clashContainer) {
             this.clashContainer.classList.remove('motion-sickness-active');
             gsap.killTweensOf(this.clashContainer);
-            this.cleanupClashStorm();
         }
+        // Full storm cleanup: stop intervals, kill chromatic, remove all DOM storm elements
+        this.cleanupClashStorm();
 
-        // --- STEP 1: POWER OFF (CUT TO BLACK) ---
+        // Cut background to pure black
+        gsap.set(document.body, { backgroundColor: '#000000' });
         document.body.style.backgroundColor = '#000000';
+
+        // Hide the clash container itself
         if (this.clashContainer) {
-            gsap.set(this.clashContainer, { opacity: 0 });
-            this.clashContainer.style.display = 'none';
+            gsap.set(this.clashContainer, { opacity: 0, display: 'none' });
         }
+        // Hide any lingering reboot toggle
+        if (this.rebootToggle) gsap.set(this.rebootToggle, { opacity: 0, display: 'none' });
+        // Hide zoom-container leftovers
+        if (this.zoomContainer) gsap.set(this.zoomContainer, { opacity: 0 });
 
-        if (this.rebootToggle) {
-            this.rebootToggle.classList.remove('off');
-            if (this.toggleStatus) this.toggleStatus.innerText = "POWER: ON";
-            this.rebootToggle.style.display = 'flex';
-            gsap.fromTo(this.rebootToggle, { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: "power2.out" });
-        }
+        // Restore the timeline gradient — bg is now black so it looks correct again.
+        gsap.to('#timeline-gradient', { opacity: 1, duration: 0.8, delay: 1.0, ease: 'power2.out' });
 
-        await new Promise(r => setTimeout(r, 400));
-
-        // Flip to OFF
-        if (this.rebootToggle) {
-            this.rebootToggle.classList.add('off');
-            if (this.toggleStatus) this.toggleStatus.innerText = "POWER: OFF";
-        }
-
-        // --- STEP 2: PAUSE IN THE VOID ---
-        await new Promise(r => setTimeout(r, 1000));
-
-        // --- STEP 3: POWER ON (RE-FLIP) ---
-        if (this.rebootToggle) {
-            this.rebootToggle.classList.remove('off');
-            if (this.toggleStatus) this.toggleStatus.innerText = "POWER: ON";
-        }
-
-        await new Promise(r => setTimeout(r, 400));
-
-        // --- STEP 4: WHITE OUT ---
-        document.body.classList.add('white-reboot');
-        if (this.zoomContainer) {
-            this.zoomContainer.classList.add('white-mode', 'active');
-            this.zoomContainer.style.display = 'block';
-            gsap.set(this.zoomContainer, { opacity: 1 });
-        }
-
-        if (this.rebootToggle) {
-            gsap.to(this.rebootToggle, { opacity: 0, duration: 0.2, onComplete: () => {
-                this.rebootToggle.style.display = 'none';
-            }});
-        }
-    }
-
-    showBlankSlate() {
-        // Redundant - Tick 39 now uses showRebootSequence
+        // Unlock after the zoom/wipe completes
+        setTimeout(() => { isAnimating = false; }, 1200);
     }
 
     cleanupClashStorm() {
-        if (this.chairInterval) clearInterval(this.chairInterval);
-        if (this.infographicInterval) clearInterval(this.infographicInterval);
-        if (this.dataStormInterval) clearInterval(this.dataStormInterval);
-        if (this.chromaticTimeline) this.chromaticTimeline.kill();
+        // Stop all storm intervals
+        if (this.chairInterval) { clearInterval(this.chairInterval); this.chairInterval = null; }
+        if (this.infographicInterval) { clearInterval(this.infographicInterval); this.infographicInterval = null; }
+        if (this.dataStormInterval) { clearInterval(this.dataStormInterval); this.dataStormInterval = null; }
+        // Kill chromatic aberration GSAP timeline
+        if (this.chromaticTimeline) { this.chromaticTimeline.kill(); this.chromaticTimeline = null; }
+        // Kill clash-container shake/tweens
+        if (this.clashContainer) gsap.killTweensOf(this.clashContainer);
+        // Remove all spawned DOM storm images
+        document.querySelectorAll('.spawned-chair, .spawned-infographic, .spawned-data').forEach(el => el.remove());
     }
 
-    showRealityGrid() {
-        // --- TICK 40: GRID LABELS ON WHITE ---
-        if (this.realityCheck) {
-            this.realityCheck.style.display = 'none'; // Not built yet
-        }
+    // ─── TICK 40: Luftschloss Blueprint ───────────────────────────────────────
+    showLuftschloss() {
+        // Redundant zoomOut removed — it is now handled by handleInteraction() automatically
+        // when isMasterTimelineZoomed is true.
 
-        const gridLines = document.getElementById('grid-lines');
-        if (gridLines) {
-            gridLines.style.opacity = '1';
-            const lines = gridLines.querySelectorAll('.grid-line');
-            if (lines.length === 0) {
-                this.generateRealityGrid(gridLines);
-            }
-            const allLines = gridLines.querySelectorAll('.grid-line');
-            allLines.forEach(l => {
-                l.classList.add('white-mode');
-                l.style.background = 'rgba(0,0,0,0.1)';
-            });
+        // Ensure pure black canvas
+        gsap.set(document.body, { backgroundColor: '#000000' });
 
-            gsap.fromTo(allLines, 
-                { opacity: 0, scaleX: 0, scaleY: 0 },
-                { opacity: 1, scaleX: 1, scaleY: 1, duration: 1, stagger: 0.05, ease: "power2.out" }
-            );
-        }
+        // Remove any old luftschloss layer
+        const old = document.getElementById('luftschloss-overlay');
+        if (old) old.remove();
 
-        const gridLabels = document.getElementById('grid-labels');
-        if (gridLabels) {
-            gsap.to(gridLabels, { opacity: 1, duration: 1.5, delay: 0.5 });
-            const serifs = gridLabels.querySelectorAll('.serif-label');
-            serifs.forEach(s => s.style.color = '#333'); // Dark serif on white
-        }
-    }
-
-    generateRealityGrid(container) {
-        const cols = 10;
-        const spacing = 100;
-        const startX = (window.innerWidth - (cols * spacing)) / 2;
-        const startY = (window.innerHeight - (10 * spacing)) / 2;
-
-        for (let c = 0; c < 12; c++) {
-            const line = document.createElement('div');
-            line.className = 'grid-line';
-            line.style.left = `${startX + c * spacing}px`;
-            line.style.top = '0'; line.style.width = '1px'; line.style.height = '100%';
-            line.style.background = 'rgba(57, 255, 20, 0.2)'; // Neon green for reality
-            container.appendChild(line);
-        }
-        for (let r = 0; r < 12; r++) {
-            const line = document.createElement('div');
-            line.className = 'grid-line';
-            line.style.top = `${startY + r * spacing}px`;
-            line.style.left = '0'; line.style.height = '1px'; line.style.width = '100%';
-            line.style.background = 'rgba(57, 255, 20, 0.2)';
-            container.appendChild(line);
-        }
-    }
-
-    showRealityCheck() {
-        // --- TICK 41: BACK TO BLACK + GREEN BULLSHIT ---
-        document.body.classList.remove('white-reboot');
-        document.body.style.backgroundColor = '#050505';
-
-        if (this.zoomContainer) {
-            this.zoomContainer.classList.remove('white-mode');
-            this.zoomContainer.style.backgroundColor = '#050505';
-            gsap.to(this.zoomContainer, { backgroundColor: '#050505', duration: 0.5 });
-        }
-
-        // Force background cut
-        gsap.set(document.body, { backgroundColor: '#050505' });
-
-        // Grid Lines back to Neon
-        const lines = document.querySelectorAll('.grid-line');
-        lines.forEach(l => {
-            l.classList.remove('white-mode');
-            l.style.background = 'rgba(57, 255, 20, 0.15)';
+        // Build the glowing cyan CSS-grid / blueprint overlay
+        const overlay = document.createElement('div');
+        overlay.id = 'luftschloss-overlay';
+        Object.assign(overlay.style, {
+            position: 'fixed', inset: '0', zIndex: '200',
+            pointerEvents: 'none', opacity: '0'
         });
 
-        // Labels back to Green/Gray
-        const labels = document.querySelectorAll('.serif-label');
-        labels.forEach(s => s.style.color = '#666');
+        // SVG grid lines (cyan)
+        const COLS = 8, ROWS = 6;
+        const cw = window.innerWidth, ch = window.innerHeight;
+        let svgMarkup = `<svg xmlns="http://www.w3.org/2000/svg" width="${cw}" height="${ch}" style="position:absolute;inset:0;">`;
+        const lineStyle = 'stroke:#00A3FF;stroke-width:0.8;opacity:0.4;';
+        for (let c = 0; c <= COLS; c++) {
+            const x = (c / COLS) * cw;
+            svgMarkup += `<line x1="${x}" y1="0" x2="${x}" y2="${ch}" style="${lineStyle}"/>`;
+        }
+        for (let r = 0; r <= ROWS; r++) {
+            const y = (r / ROWS) * ch;
+            svgMarkup += `<line x1="0" y1="${y}" x2="${cw}" y2="${y}" style="${lineStyle}"/>`;
+        }
+        svgMarkup += `<line x1="0" y1="0" x2="${cw}" y2="${ch}" style="stroke:#00A3FF;stroke-width:0.4;opacity:0.15;"/>`;
+        svgMarkup += `<line x1="${cw}" y1="0" x2="0" y2="${ch}" style="stroke:#00A3FF;stroke-width:0.4;opacity:0.15;"/>`;
+        svgMarkup += `<line x1="${cw/2}" y1="0" x2="${cw/2}" y2="${ch}" style="stroke:#00A3FF;stroke-width:1.5;opacity:0.6;"/>`;
+        svgMarkup += `<line x1="0" y1="${ch/2}" x2="${cw}" y2="${ch/2}" style="stroke:#00A3FF;stroke-width:1.5;opacity:0.6;"/>`;
+        svgMarkup += `<circle cx="${cw/2}" cy="${ch/2}" r="4" fill="#00A3FF" opacity="0.9"/>`;
+        svgMarkup += `<circle cx="${cw/2}" cy="${ch/2}" r="12" fill="none" stroke="#00A3FF" stroke-width="1" opacity="0.5"/>`;
+        svgMarkup += '</svg>';
+        overlay.innerHTML = svgMarkup;
 
-        if (this.realityCheck) {
-            this.realityCheck.classList.remove('white-mode');
-            this.realityCheck.style.display = 'block';
-            this.realityCheck.style.color = '#39FF14'; 
-            gsap.fromTo(this.realityCheck, { scale: 1.5, opacity: 0 }, { 
-                scale: 1, 
-                opacity: 1, 
-                duration: 0.8, 
-                ease: "back.out(2)" 
+        // Technical labels
+        const labels = [
+            { text: 'CSS-GRID_ALIGNMENT', x: '5%', y: '8%' },
+            { text: 'TENSION_NODE // 01', x: '55%', y: '48%' },
+            { text: 'AXIS: X=0 Y=0', x: '5%', y: '53%' },
+            { text: 'MODULE_WIDTH: AUTO', x: '70%', y: '15%' },
+            { text: 'ANCHOR: CENTER', x: '40%', y: '88%' },
+            { text: 'GAP: 0px', x: '80%', y: '72%' }
+        ];
+        labels.forEach(({ text, x, y }) => {
+            const lbl = document.createElement('div');
+            lbl.className = 'luftschloss-label';
+            Object.assign(lbl.style, {
+                position: 'absolute', left: x, top: y,
+                fontFamily: '"JetBrains Mono", monospace', fontSize: '10px',
+                color: '#00A3FF', opacity: '0', letterSpacing: '0.15em',
+                textTransform: 'uppercase', whiteSpace: 'nowrap',
+                textShadow: '0 0 8px rgba(0,163,255,0.7)'
             });
+            lbl.textContent = text;
+            overlay.appendChild(lbl);
+        });
+
+        document.body.appendChild(overlay);
+        this._luftschlossOverlay = overlay;
+
+        // FIX 5: Grid animates in over ~1.2s, then stays fully visible.
+        // User must press a key again to advance to Tick 41.
+        const tl40 = gsap.timeline();
+        tl40.to(overlay, { opacity: 1, duration: 0.6, ease: 'power2.out' });
+        tl40.fromTo('.luftschloss-label',
+            { opacity: 0, y: 6 },
+            { opacity: 1, y: 0, duration: 0.4, stagger: 0.12, ease: 'power2.out' },
+            '+=0.1'
+        ).eventCallback("onComplete", () => { isAnimating = false; });
+    }
+
+    // ─── TICK 41: Bullshit Cut ────────────────────────────────────────────────
+    showBullshitCut() {
+        // Instantly destroy the Luftschloss
+        if (this._luftschlossOverlay) {
+            this._luftschlossOverlay.remove();
+            this._luftschlossOverlay = null;
         }
-    }
 
-    showBlueprint() {
-        // Obsolete
-    }
+        // Ensure black background
+        gsap.set(document.body, { backgroundColor: '#000000' });
 
-    showFakeLuftschloss() {
-        // Obsolete
-    }
+        // Create the BULLSHIT flash element
+        const flash = document.createElement('div');
+        flash.id = 'bullshit-flash';
+        Object.assign(flash.style, {
+            position: 'fixed', inset: '0', zIndex: '9500',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            backgroundColor: '#000000', pointerEvents: 'none'
+        });
+        const txt = document.createElement('div');
+        Object.assign(txt.style, {
+            fontFamily: '"JetBrains Mono", monospace',
+            fontSize: 'clamp(48px, 8vw, 96px)',
+            fontWeight: '700', color: '#FF0000',
+            letterSpacing: '0.05em',
+            textShadow: '0 0 40px rgba(255,0,0,0.9), 0 0 80px rgba(255,0,0,0.5)',
+            userSelect: 'none'
+        });
+        txt.textContent = '[ // BULLSHIT ]';
+        flash.appendChild(txt);
+        document.body.appendChild(flash);
+        this._bullshitFlash = flash;
 
-    showFatalErrors() {
-        // Obsolete but kept for logic safety until fully shifted
-    }
-    showRealityCheck() {
-        if (this.clashContainer) this.clashContainer.style.display = 'none';
-        if (this.zoomContainer) {
-            this.zoomContainer.style.backgroundColor = '#050505';
-            const gl = document.getElementById('grid-lines');
-            if (gl) gl.style.display = 'none';
-            const glabels = document.getElementById('grid-labels');
-            if (glabels) glabels.style.display = 'none';
-            // Hide chairs
-            document.querySelectorAll('.spawned-chair').forEach(c => c.style.display = 'none');
-        }
-        if (this.realityCheck) this.realityCheck.style.display = 'block';
-    }
-
-    async showTrueValue() {
-        if (this.realityCheck) this.realityCheck.style.display = 'none';
-        if (this.grindTerminal) this.grindTerminal.style.display = 'block';
-
-        const t1 = document.getElementById('grind-text-1');
-        const t2 = document.getElementById('grind-text-2');
-        const bar = document.getElementById('grind-bar');
-
-        if (t1) await this.typeToElement(t1, ">  EXECUTING: 90_DAYS_GRIND.exe");
-
-        // Bar progress
-        if (bar) {
-            const total = 20;
-            for (let i = 0; i <= total; i++) {
-                const perc = Math.floor((i / total) * 100);
-                bar.innerText = `> [${'█'.repeat(i)}${' '.repeat(total - i)}] ${perc}% COMPLETE`;
-                await new Promise(r => setTimeout(r, 70));
+        // Flash for exactly 1 second, then cut to absolute black
+        gsap.fromTo(flash, { opacity: 0 }, { opacity: 1, duration: 0.08, ease: 'none',
+            onComplete: () => {
+                setTimeout(() => {
+                    gsap.to(flash, { opacity: 0, duration: 0.15, ease: 'none',
+                        onComplete: () => { 
+                            flash.remove(); 
+                            this._bullshitFlash = null;
+                            isAnimating = false; // Unlock here
+                        }
+                    });
+                }, 1000);
             }
+        });
+    }
+
+    // ─── TICK 42: Clean Resilience Terminal ──────────────────────────────────
+    async showCleanResilience() {
+        // Ensure black background, hide old elements
+        gsap.set(document.body, { backgroundColor: '#000000' });
+        if (this.realityCheck) gsap.set(this.realityCheck, { opacity: 0, display: 'none' });
+        // Ensure parent container is visible and active
+        if (this.zoomContainer) {
+            this.zoomContainer.style.display = 'block';
+            this.zoomContainer.style.opacity = '1';
+            this.zoomContainer.classList.add('active');
         }
 
-        if (t2) {
-            await new Promise(r => setTimeout(r, 300));
-            await this.typeToElement(t2, "> RESULT: FRUSTRATION_TOLERANCE_MAXED");
+        // Prepare grind terminal: clear old content, show fresh
+        if (this.grindTerminal) {
+            // Style it for high-end cinematic appearance
+            Object.assign(this.grindTerminal.style, {
+                display: 'block',
+                opacity: '0',
+                left: '50%',
+                top: '50%',
+                // Precision centering in the available area (taking safe-zone into account)
+                transform: 'translate(calc(-50% - var(--safe-zone, 280px) / 2), -50%)',
+                zIndex: '9500',
+                textAlign: 'left',
+                width: '800px', // Increased to prevent wrapping
+                padding: '40px 60px',
+                background: 'rgba(0, 0, 0, 0.85)',
+                borderLeft: '2px solid rgba(57, 255, 20, 0.4)',
+                backdropFilter: 'blur(10px)',
+                whiteSpace: 'pre' // Strictly preserve leading and multiple spaces
+            });
+            const t1 = document.getElementById('grind-text-1');
+            const bar = document.getElementById('grind-bar');
+            const t2 = document.getElementById('grind-text-2');
+            if (t1) t1.innerText = '';
+            if (bar) bar.innerText = '';
+            if (t2) t2.innerText = '';
+            this.grindTerminal.style.display = 'block';
+            gsap.fromTo(this.grindTerminal, { opacity: 0 }, { opacity: 1, duration: 0.4, ease: 'power2.out' });
+
+            // Type out just the status line — no loading bars
+            if (t1) await this.typeToElement(t1, '> [SYS_STATUS]: RESILIENZ_MAXED.');
+        }
+        isAnimating = false;
+    }
+
+    // ─── TICK 43: Clean Clarity + Bracket Box ────────────────────────────────
+    async showCleanClarity() {
+        if (this.grindTerminal) {
+            const t2 = document.getElementById('grind-text-2');
+            if (t2) {
+                t2.innerText = '';
+                await this.typeToElement(t2, "> CLARITY: ACHIEVED.");
+            }
+            isAnimating = false;
         }
     }
 
@@ -1729,109 +1773,55 @@ class Presentation {
         }
     }
 
-    async showTunnelVision() {
-        if (this.grindTerminal) this.grindTerminal.style.display = 'none';
-        if (this.bracketBox) {
-            this.bracketBox.style.display = 'block';
-            setTimeout(() => this.bracketBox.classList.add('active'), 100);
-        }
 
-        const bText = document.getElementById('bracket-text');
-        if (bText) {
-            await new Promise(r => setTimeout(r, 1500));
-            await this.typeToElement(bText, "> NOISE: 0%\n> CLARITY: ACHIEVED");
-            bText.style.opacity = '1';
-        }
-    }
-
+    // ─── TICK 44: Screen Death (The Physical Reveal) ──────────────────────────
     showDimOut() {
-        document.body.classList.add('dimmed');
-    }
-
-    async showMountSequence() {
-        // Cleanup Section 5 elements
-        if (this.bracketBox) this.bracketBox.style.display = 'none';
-        const bText = document.getElementById('bracket-text');
-        if (bText) bText.innerText = '';
-
-        document.body.style.filter = "brightness(0.4)";
-        if (this.mountTerminal) this.mountTerminal.classList.add('active');
-        
-        await this.addLineToTerminal("> mount /dev/box_grundstudium", true);
-        await new Promise(r => setTimeout(r, 400));
-        await this.addLineToTerminal("> ls -la", true);
-    }
-
-    async showFile1() {
-        await this.addLineToTerminal("[FILE_01] : USER_GUIDE.pdf ...... (Strategy && Reduction)");
-    }
-
-    async showFile2() {
-        await this.addLineToTerminal("[FILE_02] : TECH_SPECS.pdf ...... (Signal Processing && Space)");
-    }
-
-    async showFileError() {
-        const line = await this.addLineToTerminal("[FILE_03] : THE_ERROR_LOG.pdf ... (Analog Crash && Frustration)");
-        if (line) {
-            line.classList.add('glitch-line');
-            setTimeout(() => line.classList.remove('glitch-line'), 300);
-        }
-    }
-
-    async showFinalVerification() {
-        const bootLines = [
-            "> VERIFYING: PRAGMATISM ............ [ OK ]",
-            "> VERIFYING: FRUSTRATION_TOLERANCE . [ OK ]",
-            "> SYSTEM_STATUS: BASICS_COMPLETED"
-        ];
-
-        for (let lineText of bootLines) {
-            await this.addLineToTerminal(lineText, true, 20); // Faster printing
-        }
-
-        if (this.mountTerminal) {
-            setTimeout(() => this.mountTerminal.classList.add('framed'), 100);
-        }
-    }
-
-    async showSystemPurge() {
-        await this.addLineToTerminal("> unmount /dev/box_grundstudium", true, 10);
-        await this.addLineToTerminal("> clear", true, 10);
-        
-        setTimeout(() => {
-            if (this.mountContent) this.mountContent.innerHTML = '';
-            if (this.mountTerminal) {
-                this.mountTerminal.classList.remove('active', 'framed');
-                this.mountTerminal.style.display = 'none';
+        // Fade everything to absolute black over 2.5 seconds
+        const elements = [this.grindTerminal, this.bracketBox, this.zoomContainer].filter(Boolean);
+        gsap.to(elements, { 
+            opacity: 0, 
+            duration: 2.5, 
+            ease: 'power2.inOut',
+            onComplete: () => {
+                if (this.zoomContainer) this.zoomContainer.style.display = 'none';
+                isAnimating = false;
             }
-            document.body.style.filter = "brightness(0.05)";
-        }, 300);
+        });
+
+        // Main screen dead-black; master-timeline stays visible
+        gsap.to(document.body, { backgroundColor: '#000000', duration: 2.5, ease: 'power2.inOut' });
     }
 
-
-
-    showFoundationLine() {
-        if (this.foundationLine) this.foundationLine.style.width = '100%';
-    }
-
+    // ─── TICK 45: The Final Cut (End of Log) ──────────────────────────────────
     showMicDrop() {
-        // Instant Brightness Shock
-        document.body.classList.add('shock-brightness');
-        document.body.style.backgroundColor = '#050505';
+        // Absolute final state: Subtle terminal text in center
+        document.body.style.backgroundColor = '#000000';
         
-        // Hide previous elements
-        if (this.foundationLine) this.foundationLine.style.display = 'none';
-        
-        // Show Final Text
         if (this.finalText) {
-            this.finalText.classList.add('active');
+            // Ensure centered positioning
+            Object.assign(this.finalText.style, {
+                display: 'flex',
+                opacity: '0',
+                zIndex: '9999'
+            });
+            
+            this.finalText.classList.remove('opacity-0');
+            gsap.fromTo(this.finalText, 
+                { opacity: 0 }, 
+                { 
+                    opacity: 1, 
+                    duration: 3.5, 
+                    ease: 'power2.inOut',
+                    onComplete: () => { 
+                        isAnimating = false; 
+                    } 
+                }
+            );
         }
     }
 
-    showSystemFreeze() {
-        document.body.classList.add('freeze');
-        console.log("SYSTEM FREEZE : NARRATIVE COMPLETED.");
-    }
+    // Helper Methods for the Presentation Act
+
 
     async addLineToTerminal(text, isGreen = false, speed = 40) {
         if (!this.mountContent) return null;
@@ -1849,13 +1839,11 @@ class Presentation {
 
     formatPrompt(text) {
         if (!text) return text;
+        // Strictly ensure exactly ONE space after the '>' prompt
         return text.split('\n').map(line => {
-            if (line.trimStart().startsWith('>') && !line.includes('> [') && !line.includes('> ')) {
-                return line.replace('>', '> ');
-            }
-            // Collapse multiple spaces after prompt to one, except for bracket case
-            if (line.includes('>  ') && !line.includes('> [')) {
-                return line.replace('>  ', '> ');
+            if (line.trimStart().startsWith('>')) {
+                const content = line.trimStart().substring(1).trimStart();
+                return '> ' + content;
             }
             return line;
         }).join('\n');
@@ -1863,7 +1851,6 @@ class Presentation {
 
     spawnChair(src) {
         const chair = document.createElement('img');
-        chair.src = src;
         chair.className = 'spawned-chair';
 
         const x = Math.random() * 100;
@@ -1877,8 +1864,12 @@ class Presentation {
         chair.style.width = `${size}px`;
         chair.style.transform = `translate(-50%, -50%) rotate(${rot}deg)`;
         chair.style.zIndex = z;
+        // FIX 2: Start invisible, pop in cleanly once decoded — prevents broken/half-loaded renders
+        chair.style.opacity = '0';
+        chair.onload = () => gsap.to(chair, { opacity: 1, duration: 0.2, ease: 'power2.out' });
 
         if (this.chairWell) this.chairWell.appendChild(chair);
+        chair.src = src; // Set src after onload handler to guarantee it fires
         this.chairCount++;
     }
 
@@ -1911,22 +1902,25 @@ class Presentation {
 
     spawnInfographic(src) {
         const img = document.createElement('img');
-        img.src = src;
-        img.className = 'spawned-infographic'; // Reusing style for consistency
+        img.className = 'spawned-infographic';
 
         const x = Math.random() * 100;
         const y = Math.random() * 100;
         const rot = (Math.random() - 0.5) * 45;
         const size = 300 + Math.random() * 400;
-        const z = 200 + Math.floor(Math.random() * 100); // Always on top of chairs
+        const z = 200 + Math.floor(Math.random() * 100);
 
         img.style.left = `${x}%`;
         img.style.top = `${y}%`;
         img.style.width = `${size}px`;
         img.style.transform = `translate(-50%, -50%) rotate(${rot}deg)`;
         img.style.zIndex = z;
+        // FIX 2: Invisible until loaded
+        img.style.opacity = '0';
+        img.onload = () => gsap.to(img, { opacity: 1, duration: 0.25, ease: 'power2.out' });
 
         if (this.chairWell) this.chairWell.appendChild(img);
+        img.src = src;
         this.infographicCount++;
     }
 
@@ -1951,22 +1945,25 @@ class Presentation {
 
     spawnDataImage(src) {
         const img = document.createElement('img');
-        img.src = src;
-        img.className = 'spawned-infographic'; // Reuse logic/animation
+        img.className = 'spawned-infographic';
 
         const x = Math.random() * 100;
         const y = Math.random() * 100;
         const rot = (Math.random() - 0.5) * 30;
         const size = 400 + Math.random() * 500;
-        const z = 300 + Math.floor(Math.random() * 100); // On top of infographics
+        const z = 300 + Math.floor(Math.random() * 100);
 
         img.style.left = `${x}%`;
         img.style.top = `${y}%`;
         img.style.width = `${size}px`;
         img.style.transform = `translate(-50%, -50%) rotate(${rot}deg)`;
         img.style.zIndex = z;
+        // FIX 2: Invisible until loaded
+        img.style.opacity = '0';
+        img.onload = () => gsap.to(img, { opacity: 1, duration: 0.3, ease: 'power2.out' });
 
         if (this.chairWell) this.chairWell.appendChild(img);
+        img.src = src;
         this.dataCount++;
     }
 
@@ -2038,6 +2035,7 @@ class Presentation {
         
         this.loadModels();
         this.isTransitioning = false;
+        isAnimating = false;
     }
 
     startChaos() {
@@ -2071,12 +2069,15 @@ class Presentation {
 
         setTimeout(() => {
             if (this.matchcutOverlay) this.matchcutOverlay.classList.add('active');
-            if (this.matchcutVideo1) this.matchcutVideo1.play();
+            if (this.matchcutVideo1) {
+                this.matchcutVideo1.currentTime = 0;
+                this.matchcutVideo1.play();
+            }
             this.isTransitioning = false;
         }, 1000);
 
-        // Hide the dot after 2 seconds of matchcut
         setTimeout(() => {
+            isAnimating = false; // Transition lock release
             if (this.dataCanvas) {
                 this.dataCanvas.state = 'IDLE';
                 if (this.dataCanvas.canvas) this.dataCanvas.canvas.classList.remove('active');

@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interface vs. Madness</title>
+    <link rel="icon" type="image/png" href="assets/favicon-32x32.png">
+    <title>SYS: STUDY_LOG_V1.0 | Luca Zell</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -73,6 +74,7 @@
             /* Behind overlay, in front of content */
             opacity: 0;
             /* Hidden on load */
+            transition: opacity 0.8s ease;
         }
     </style>
     <!-- Three.js Setup from Projekt A -->
@@ -104,7 +106,7 @@
 
     <!-- UI Shell -->
     <nav
-        class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-4 font-mono text-xs tracking-widest mix-blend-difference">
+        class="fixed top-0 left-0 w-full z-[9999] flex justify-between items-center px-6 py-4 font-mono text-xs tracking-widest mix-blend-difference">
         <div class="opacity-70">SYS: STUDY_LOG_V1.0</div>
         <div class="flex items-center gap-2">
             <span id="status-text" class="text-neon">STATUS: RUNNING</span>
@@ -611,7 +613,9 @@
     <div id="mic-drop-container" class="pr-[var(--safe-zone)] box-border">
 
         <div id="foundation-line"></div>
-        <div id="final-text">NEXT:<br>100% INTERFACE</div>
+        <div id="final-terminal-wrap" class="opacity-0 flex items-center justify-center h-full">
+            <div id="final-log-text" class="font-mono text-neon text-xs tracking-[0.2em] uppercase">> [ END OF LOG ]</div>
+        </div>
     </div>
 
     <div id="ui-container" class="pr-[var(--safe-zone)] box-border">
@@ -654,19 +658,19 @@
             <!-- Chromatic Aberration Filter Definition -->
             <svg style="position: absolute; width: 0; height: 0;">
                 <filter id="chromatic-aberration">
-                    <feMorphology operator="dilate" radius="1" in="SourceGraphic" result="dilated"/>
-                    <feColorMatrix in="dilated" type="matrix" 
-                        values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="red"/>
-                    <feColorMatrix in="dilated" type="matrix" 
-                        values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="green"/>
-                    <feColorMatrix in="dilated" type="matrix" 
-                        values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="blue"/>
-                    
-                    <feOffset in="red" dx="1.5" dy="0" result="red-offset"/>
-                    <feOffset in="blue" dx="-1.5" dy="0" result="blue-offset"/>
-                    
-                    <feBlend in="red-offset" in2="green" mode="screen" result="rg"/>
-                    <feBlend in="rg" in2="blue-offset" mode="screen"/>
+                    <feMorphology operator="dilate" radius="1" in="SourceGraphic" result="dilated" />
+                    <feColorMatrix in="dilated" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0"
+                        result="red" />
+                    <feColorMatrix in="dilated" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0"
+                        result="green" />
+                    <feColorMatrix in="dilated" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0"
+                        result="blue" />
+
+                    <feOffset in="red" dx="1.5" dy="0" result="red-offset" />
+                    <feOffset in="blue" dx="-1.5" dy="0" result="blue-offset" />
+
+                    <feBlend in="red-offset" in2="green" mode="screen" result="rg" />
+                    <feBlend in="rg" in2="blue-offset" mode="screen" />
                 </filter>
             </svg>
 
